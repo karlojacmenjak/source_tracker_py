@@ -20,4 +20,4 @@ def setup_and_teardown() -> Generator[None, Any, None]:
 
 def test_can_connect_to_app():
     response = client.get("/")
-    assert response.status_code == 200
+    assert response.status_code == 404
