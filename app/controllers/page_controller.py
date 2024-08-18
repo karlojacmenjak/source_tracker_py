@@ -10,6 +10,6 @@ class PageController:
     def main(self, request: Request) -> _TemplateResponse:
         return self.templates.TemplateResponse(
             request=request,
-            name="main.j2",
-            context={},
+            name="main.html",
+            context={"count": 2},
         )
