@@ -1,4 +1,4 @@
-from core.controllers.page_controller import PageController
+from app.controllers import PageController
 
 
 class ControllerFactory:

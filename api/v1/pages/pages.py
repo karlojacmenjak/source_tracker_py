@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request
 from fastapi.params import Depends
 from fastapi.responses import HTMLResponse
 
-from core.controllers.page_controller import PageController
+from app.controllers import PageController
 from core.factory.controller_factory import ControllerFactory
 
 pages_router = APIRouter()
