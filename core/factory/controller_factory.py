@@ -1,4 +1,7 @@
-from app.controllers import PageController
+import os
+
+from app.controllers import AuthController, PageController
+from core.constant import DiscordAPI
 
 
 class ControllerFactory:
@@ -6,3 +9,11 @@ class ControllerFactory:
     @staticmethod
     def get_page_controller() -> PageController:
         return PageController()
+
+    @staticmethod
+    def get_auth_controller() -> AuthController:
+        return AuthController(
+            client_id=os.environ[DiscordAPI.client_id],
+            client_secret=os.environ[DiscordAPI.client_secret],
+            redirect_uri=DiscordAPI.redirect_uri,
+        )
