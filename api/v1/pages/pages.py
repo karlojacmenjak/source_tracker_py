@@ -13,7 +13,7 @@ pages_router = APIRouter()
 @pages_router.get("/", response_class=HTMLResponse)
 async def main(
     request: Request,
-    page_controller: PageController = Depends(ControllerFactory().get_page_controller),
+    page_controller: PageController = Depends(ControllerFactory.get_page_controller),
 ) -> HTMLResponse:
     data = MainDataModel(guild_count=await bot.guild_count())
 
