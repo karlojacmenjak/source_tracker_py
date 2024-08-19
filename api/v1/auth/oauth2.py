@@ -36,7 +36,7 @@ async def callback(
     # TODO Store session in dp
     session_id = await db.add_session(token, refresh_token, expires_in, user_id)
 
-    response = RedirectResponse(url="/guilds")
+    response = RedirectResponse(url="/v1/dashboard")
     response.set_cookie(
         key="session_id",
         value=session_id,

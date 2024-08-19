@@ -1,14 +1,15 @@
 import os
-from math import log
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.params import Depends
 from fastapi.responses import HTMLResponse
+from starlette.templating import _TemplateResponse
 
 from app.controllers import PageController
 from app.discord.bot import bot
 from app.templates.data_models import MainDataModel
 from core.constant import DiscordAPI
+from core.database.local_database import db
 from core.factory.controller_factory import ControllerFactory
 
 pages_router = APIRouter()
@@ -24,3 +25,18 @@ async def main(
     )
 
     return page_controller.main(request=request, data=data)
+
+
+@pages_router.get("/dashboard", response_class=HTMLResponse)
+async def guilds(
+    request: Request,
+    page_controller: PageController = Depends(ControllerFactory.get_page_controller),
+) -> _TemplateResponse:
+    session_id = request.cookies.get("session_id")
+    session = await db.get_session(session_id)
+    if not session_id or not session:
+        raise HTTPException(status_code=401, detail="no auth")
+
+    token, refresh_token, token_expires_at = session
+
+    return page_controller.global_dashboard(request=request)

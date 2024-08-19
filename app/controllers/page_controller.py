@@ -12,6 +12,13 @@ class PageController:
     def main(self, request: Request, data: MainDataModel) -> _TemplateResponse:
         return self.templates.TemplateResponse(
             request=request,
-            name="main.html",
+            name="index.html",
             context=data.__dict__,
+        )
+
+    def global_dashboard(self, request: Request) -> _TemplateResponse:
+        return self.templates.TemplateResponse(
+            request=request,
+            name="pages/global_dashboard.html",
+            context={},
         )
