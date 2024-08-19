@@ -29,10 +29,14 @@ async def callback(
         raise HTTPException(status_code=401, detail="Invalid Auth Code")
 
     token, refresh_token, expires_in = result
-    print(token, refresh_token, expires_in)
     user = await discord_api.get_user(token)
     user_id = user.get("id")
 
+    # TODO Store session in dp
+    session_id = 0
+
     response = RedirectResponse(url="/guilds")
+    response.set_cookie(key="session_id", value=session_id, httponly=True)
+
     await discord_api.close()
     return response
