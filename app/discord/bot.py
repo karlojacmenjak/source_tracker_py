@@ -3,7 +3,7 @@ from typing import Dict
 
 from discord import Bot
 
-from core.constant import EnviormentVariables
+from core.constant import DiscordAPI
 
 
 class SourceTrackerBot(Bot):
@@ -27,7 +27,7 @@ def create_bot() -> SourceTrackerBot:
 
 
 async def run_bot() -> None:
-    token_env = EnviormentVariables.bot_token
+    token_env = DiscordAPI.bot_token
 
     if os.environ[token_env] is None:
         raise RuntimeError(f"Enviornment variable `{token_env}` is set to None")

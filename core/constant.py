@@ -14,11 +14,8 @@ class DiscordAPI:
     client_id = "CLIENT_ID"
     client_secret = "CLIENT_SECRET"
     login_url = "LOGIN_URL"
-    redirect_uri = f"http://{AppConstants.host}:{AppConstants.port}/v1/callback"
-
-
-class EnviormentVariables:
     bot_token = "BOT_TOKEN"
+    redirect_uri = f"http://{AppConstants.host}:{AppConstants.port}/v1/callback"
 
 
 class UvicornConfig(Config):
