@@ -11,5 +11,5 @@ class PageController:
         return self.templates.TemplateResponse(
             request=request,
             name="main.html",
-            context={"count": count},
+            context=count,
         )
