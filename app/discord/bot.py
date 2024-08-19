@@ -1,4 +1,5 @@
 import os
+from asyncio import AbstractEventLoop
 
 from discord import Bot
 
@@ -21,13 +22,13 @@ def create_bot() -> SourceTrackerBot:
     return _bot
 
 
-def run_bot() -> None:
+async def run_bot() -> None:
     token_env = EnviormentVariables.bot_token
 
     if os.environ[token_env] is None:
         raise RuntimeError(f"Enviornment variable `{token_env}` is set to None")
 
-    bot.run(os.environ[token_env])
+    await bot.start(os.environ[token_env])
 
 
 bot = create_bot()

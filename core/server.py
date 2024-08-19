@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from uvicorn import Config, Server
 
 from api import router
 from core.constant import AppConstants
@@ -18,3 +19,8 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
+
+
+async def run_api() -> None:
+    server = Server(config=Config(app, host="0.0.0.0", port=25247))
+    await server.serve(sockets=None)
