@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 
 from app.controllers import PageController
 from app.discord.bot import bot
+from app.templates.data_models import MainDataModel
 from core.factory.controller_factory import ControllerFactory
 
 pages_router = APIRouter()
@@ -14,5 +15,6 @@ async def main(
     request: Request,
     page_controller: PageController = Depends(ControllerFactory().get_page_controller),
 ) -> HTMLResponse:
-    count = await bot.guild_count()
-    return page_controller.main(request=request, count=count)
+    data = MainDataModel(guild_count=await bot.guild_count())
+
+    return page_controller.main(request=request, data=data)
