@@ -17,13 +17,14 @@ class DashboardDB(ezcord.DBHandler):
             refresh_token TEXT,
             token_expires_at TIMESTAMP,
             user_id INTEGER PRIMARY KEY
-            );
-            
-            CREATE TABLE IF NOT EXISTS settings (
+            )"""
+        )
+
+        await self.exec(
+            """CREATE TABLE IF NOT EXISTS settings (
             guild_id INTEGER PRIMARY KEY,
             example_feature INTEGER DEFAULT 0
-            )
-            """
+            )"""
         )
 
     async def add_session(self, token, refresh_token, expires_in, user_id) -> str:
