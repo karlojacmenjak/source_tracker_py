@@ -1,10 +1,19 @@
-from fastapi import APIRouter
+import os
+
+from fastapi import APIRouter, HTTPException
+from fastapi.params import Depends
+from fastapi.responses import RedirectResponse
+
+from core.constant import DiscordAPI
+from core.factory.controller_factory import ControllerFactory
 
 oauth2_router = APIRouter()
 
 
 @oauth2_router.get("/callback")
 async def callback(
+    code: str, discord_api=Depends(ControllerFactory.get_auth_controller)
+) -> RedirectResponse:
     await discord_api.setup()
 
     data = {
@@ -23,4 +32,7 @@ async def callback(
     print(token, refresh_token, expires_in)
     user = await discord_api.get_user(token)
     user_id = user.get("id")
+
+    response = RedirectResponse(url="/guilds")
     await discord_api.close()
+    return response
