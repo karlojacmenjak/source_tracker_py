@@ -4,7 +4,8 @@ from fastapi import APIRouter, HTTPException
 from fastapi.params import Depends
 from fastapi.responses import RedirectResponse
 
-from core.constant import DiscordAPI
+from core.constant import AppConstants, DiscordAPI
+from core.database.local_database import db
 from core.factory.controller_factory import ControllerFactory
 
 oauth2_router = APIRouter()
@@ -33,10 +34,15 @@ async def callback(
     user_id = user.get("id")
 
     # TODO Store session in dp
-    session_id = 0
+    session_id = await db.add_session(token, refresh_token, expires_in, user_id)
 
     response = RedirectResponse(url="/guilds")
-    response.set_cookie(key="session_id", value=session_id, httponly=True)
+    response.set_cookie(
+        key="session_id",
+        value=session_id,
+        httponly=True,
+        secure=AppConstants.https_secure_mode,
+    )
 
     await discord_api.close()
     return response

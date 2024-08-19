@@ -7,6 +7,7 @@ class AppConstants:
     description = "Discord app for tracking Source Engine based servers information"
     host = "localhost"
     port = 8000
+    https_secure_mode = True
 
 
 class DiscordAPI:
