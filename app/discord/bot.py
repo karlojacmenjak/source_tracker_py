@@ -14,7 +14,6 @@ class SourceTrackerBot(Bot):
         print(
             "\nDiscord bot logged in as:",
             f"{self.user.name} with user id {self.user.id}",
-            self.ipc.host,
             sep="\n",
         )
 
