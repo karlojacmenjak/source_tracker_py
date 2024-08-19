@@ -14,4 +14,4 @@ class EnviormentVariables:
 
 class UvicornConfig(Config):
     def __init__(self, app: FastAPI):
-        super.__init__(app, host="0.0.0.0", prot=8000)
+        super().__init__(app, host="0.0.0.0", port=8000)
