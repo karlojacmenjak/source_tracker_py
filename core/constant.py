@@ -13,7 +13,7 @@ class DiscordAPI:
     api_endpoint = "https://discord.com/api"
     client_id = "CLIENT_ID"
     client_secret = "CLIENT_SECRET"
-    grant_type = "authorization_code"
+    login_url = "LOGIN_URL"
     redirect_uri = f"http://{AppConstants.host}:{AppConstants.port}/v1/callback"
 
 
