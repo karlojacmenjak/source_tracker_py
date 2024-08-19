@@ -1,4 +1,5 @@
 import asyncio
+import sys
 
 from app.discord import run_bot
 from core.server import run_api
@@ -15,6 +16,6 @@ if __name__ == "__main__":
         try:
             loop.run_until_complete(main())
         except KeyboardInterrupt:
-            print("Program exited")
             loop.close()
-            break
+            print("Program exited")
+            sys.exit()
