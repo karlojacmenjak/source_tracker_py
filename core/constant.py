@@ -9,6 +9,7 @@ class AppConstants:
 
 class EnviormentVariables:
     bot_token = "BOT_TOKEN"
+    ipc_secret = "IPC_SECRET"
 
 
 class UvicornConfig(Config):

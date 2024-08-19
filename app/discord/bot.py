@@ -1,7 +1,7 @@
 import os
-from asyncio import AbstractEventLoop
 
 from discord import Bot
+from discord.ext.ipc import Server
 
 from core.constant import EnviormentVariables
 
@@ -9,12 +9,17 @@ from core.constant import EnviormentVariables
 class SourceTrackerBot(Bot):
     def __init__(self, description=None, *args, **options) -> None:
         super().__init__(description, *args, **options)
+        self.ipc = Server(
+            self,
+            secret_key=os.environ[EnviormentVariables.ipc_secret],
+        )
 
     async def on_ready(self) -> None:
-        print("Logged in as")
-        print(self.user.name)
-        print(self.user.id)
-        print("------")
+        print(
+            "\nDiscord bot logged in as:",
+            f"{self.user.name} with user id {self.user.id}",
+            sep="\n",
+        )
 
 
 def create_bot() -> SourceTrackerBot:
