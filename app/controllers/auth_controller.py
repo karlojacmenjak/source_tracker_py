@@ -1,3 +1,5 @@
+from typing import Any
+
 import httpx
 from fastapi import HTTPException
 
@@ -8,7 +10,7 @@ class AuthController:
     client_id: str
     client_secret: str
     redirect_uri: str
-    session: httpx.Client | None
+    session: httpx.AsyncClient | None
 
     def __init__(self, client_id, client_secret, redirect_uri) -> None:
         self.client_id = client_id
