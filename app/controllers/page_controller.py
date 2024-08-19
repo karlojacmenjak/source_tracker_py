@@ -7,9 +7,9 @@ class PageController:
     def __init__(self) -> None:
         self.templates = Jinja2Templates(directory="app/templates")
 
-    def main(self, request: Request) -> _TemplateResponse:
+    def main(self, request: Request, count: int | str) -> _TemplateResponse:
         return self.templates.TemplateResponse(
             request=request,
             name="main.html",
-            context={"count": 2},
+            context={"count": count},
         )
