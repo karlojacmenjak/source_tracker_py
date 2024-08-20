@@ -22,7 +22,7 @@ async def main(
     page_controller: PageController = Depends(ControllerFactory.get_page_controller),
 ) -> HTMLResponse:
     data = MainDataModel(
-        guild_count=await bot.guild_count(), login_url=os.environ[DiscordAPI.login_url]
+        guild_count=bot.guild_count(), login_url=os.environ[DiscordAPI.login_url]
     )
 
     return page_controller.main(request=request, data=data)

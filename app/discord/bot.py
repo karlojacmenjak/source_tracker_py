@@ -17,7 +17,7 @@ class SourceTrackerBot(Bot):
             sep="\n",
         )
 
-    async def guild_count(self) -> int:
+    def guild_count(self) -> int:
         return len(self.guilds)
 
 
