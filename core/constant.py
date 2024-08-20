@@ -12,6 +12,8 @@ class AppConstants:
 
 class DiscordAPI:
     api_endpoint = "https://discord.com/api"
+    icons_endpoint = "https://cdn.discordapp.com/icons"
+    default_avatar_url = "https://cdn.discordapp.com/embed/avatars/0.png"
     client_id = "CLIENT_ID"
     client_secret = "CLIENT_SECRET"
     login_url = "LOGIN_URL"
