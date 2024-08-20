@@ -1,20 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <div>
-        {% for guild in guilds %}
-        <a href={{guild.guild_dashboard_url}}>
-            <div class="item">
-                <img class="title" src="{{guild.guild_image_url}}">
-                <p class="title"> <b>{{ guild.name }}</b> </p>
-            </div>
-        </a>
-        {% endfor %}
-    </div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Source Tracker Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style type="text/tailwindcss">
+      .btn-primary {
+        @apply py-2 px-5 bg-rose-700 text-white rounded-full
+        hover:bg-rose-800 focus:outline-none focus:ring focus:ring-yellow-400;
+      }
+
+      .guild .guild-content {
+        @apply flex items-center mt-4 p-4 
+        rounded-2xl hover:bg-neutral-900 hover:ring hover:ring-yellow-400;
+      }
+
+      .guild img {
+        @apply w-[48px] h-[48px] rounded-full;
+      }
+
+      .guild .guild-info {
+        @apply ml-4;
+      }
+
+      .guild .guild-name {
+        @apply text-xl;
+      }
+
+      .guild .guild-users {
+        @apply text-sm;
+      }
+    </style>
+  </head>
+
+  <body class="bg-neutral-950 text-slate-200">
+    <header class="bg-rose-700 p-4 flex items-center">
+      <a href="/global_dashboard.html">
+        <h1 class="text-2xl">Source Tracker Demo</h1>
+      </a>
+
+      <div class="flex-1"></div>
+
+      <img class="w-[24px] h-[24px]" src="" alt="discord user profile" />
+      <span class="ml-2">Discord user</span>
+
+      <span class="ml-2 cursor-pointer underline">Log out</span>
+    </header>
+
+    <main class="p-16">
+      <div>
+        <h2 class="text-4xl">Guilds</h2>
+        <div>
+          {% for guild in guilds %}
+          <div class="guild">
+            <a href="{{guild.guild_dashboard_url}}">
+              <div class="guild-content">
+                <img src="{{guild.guild_image_url}}" alt="guild icon" />
+                <div class="guild-info">
+                  <div class="guild-name">{{guild.name}}</div>
+                  <div class="guild-users">Users: 200</div>
+                </div>
+              </div>
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </main>
+  </body>
 </html>
