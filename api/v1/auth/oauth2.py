@@ -6,7 +6,7 @@ from fastapi.responses import RedirectResponse
 
 from app.controllers.auth_controller import AuthController
 from app.controllers.discord_data_controller import DiscordDataController
-from app.models.auth_models import OAuth2BodyData
+from app.models.auth import OAuth2BodyData
 from core.constant import AppConstants, DiscordAPI
 from core.database.local_database import db
 from core.factory.controller_factory import ControllerFactory
@@ -38,7 +38,7 @@ async def callback(
 
     token, refresh_token, expires_in = result
     user = await discord_data.get_user(token)
-    user_id = user.get("id")
+    user_id = user.id
 
     # TODO Store session in dp
     session_id = await db.add_session(token, refresh_token, expires_in, user_id)
