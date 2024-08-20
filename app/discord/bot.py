@@ -1,5 +1,4 @@
 import os
-from typing import Dict
 
 from discord import Bot
 
@@ -19,6 +18,9 @@ class SourceTrackerBot(Bot):
 
     def guild_count(self) -> int:
         return len(self.guilds)
+
+    def get_guild_ids(self) -> list[int]:
+        return [guild.id for guild in self.guilds]
 
 
 def create_bot() -> SourceTrackerBot:

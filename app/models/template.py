@@ -1,6 +1,4 @@
-from pydantic import BaseModel
-
-from app.models.guild import PartialDiscordGuildModel
+from pydantic import BaseModel, HttpUrl
 
 
 class MainDataModel(BaseModel):
@@ -8,5 +6,14 @@ class MainDataModel(BaseModel):
     login_url: str
 
 
+class DashboardGuildData(BaseModel):
+    name: str
+    guild_image_url: HttpUrl
+    guild_dashboard_url: str
+    approximate_member_count: int | None = None
+    approximate_presence_count: int | None = None
+
+
 class DashboardDataModel(BaseModel):
-    guilds: list[PartialDiscordGuildModel]
+
+    guilds: list[DashboardGuildData]

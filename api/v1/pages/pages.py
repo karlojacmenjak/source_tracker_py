@@ -8,7 +8,7 @@ from starlette.templating import _TemplateResponse
 
 from app.controllers import DiscordDataController, PageController
 from app.discord.bot import bot
-from app.models.template import DashboardDataModel, MainDataModel
+from app.models.template import DashboardDataModel, DashboardGuildData, MainDataModel
 from core.constant import DiscordAPI
 from core.database.local_database import local_db
 from core.factory.controller_factory import ControllerFactory
@@ -47,13 +47,20 @@ async def guilds(
     user = await discord_data.get_user(token=token)
     user_guilds = await discord_data.get_guilds(token=token)
 
+    bot_guild_ids = bot.get_guild_ids()
+
+    dashborad_guilds: list[DashboardGuildData] = []
+
     for guild in list(user_guilds):
+        if not guild.id in bot_guild_ids:
+            continue
+
         is_admin = Permissions(guild.permissions).administrator
-        if not (is_admin or guild.owner):
-            user_guilds.remove(guild)
+        if is_admin or guild.owner:
+            dashborad_guilds.append(DashboardGuildData(**guild.model_dump()))
 
     return page_controller.global_dashboard(
-        request=request, data=DashboardDataModel(guilds=user_guilds)
+        request=request, data=DashboardDataModel(guilds=dashborad_guilds)
     )
 
 
