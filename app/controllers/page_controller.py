@@ -2,7 +2,7 @@ from fastapi.requests import Request
 from fastapi.templating import Jinja2Templates
 from starlette.templating import _TemplateResponse
 
-from app.models.template import MainDataModel
+from app.models.template import DashboardDataModel, MainDataModel
 
 
 class PageController:
@@ -16,7 +16,11 @@ class PageController:
             context=data.__dict__,
         )
 
-    def global_dashboard(self, request: Request) -> _TemplateResponse:
+    def global_dashboard(
+        self, request: Request, data: DashboardDataModel
+    ) -> _TemplateResponse:
+
+        print(data.__dict__)
         return self.templates.TemplateResponse(
             request=request,
             name="pages/global_dashboard.html",
