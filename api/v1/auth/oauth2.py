@@ -4,9 +4,13 @@ from fastapi import APIRouter, HTTPException
 from fastapi.params import Depends
 from fastapi.responses import RedirectResponse
 
+from app.controllers.auth_controller import AuthController
+from app.controllers.discord_data_controller import DiscordDataController
 from core.constant import AppConstants, DiscordAPI
 from core.database.local_database import db
 from core.factory.controller_factory import ControllerFactory
+
+from .models.auth_models import OAuth2BodyData
 
 oauth2_router = APIRouter()
 
@@ -14,20 +18,22 @@ oauth2_router = APIRouter()
 @oauth2_router.get("/callback")
 async def callback(
     code: str,
-    discord_api=Depends(ControllerFactory.get_auth_controller),
-    discord_data=Depends(ControllerFactory.get_discord_data_controller),
+    discord_api: AuthController = Depends(ControllerFactory.get_auth_controller),
+    discord_data: DiscordDataController = Depends(
+        ControllerFactory.get_discord_data_controller
+    ),
 ) -> RedirectResponse:
     await discord_api.setup()
 
-    data = {
-        "client_id": os.environ[DiscordAPI.client_id],
-        "client_secret": os.environ[DiscordAPI.client_secret],
-        "redirect_uri": DiscordAPI.redirect_uri,
-        "grant_type": "authorization_code",
-        "code": code,
-    }
+    data = OAuth2BodyData(
+        client_id=os.environ[DiscordAPI.client_id],
+        client_secret=os.environ[DiscordAPI.client_secret],
+        redirect_uri=DiscordAPI.redirect_uri,
+        grant_type="authorization_code",
+        code=code,
+    )
 
-    result = await discord_api.get_token_response(data)
+    result = await discord_api.get_token_response(data.__dict__)
     if result is None:
         raise HTTPException(status_code=401, detail="Invalid Auth Code")
 
