@@ -1,8 +1,8 @@
-from typing import Any
+from datetime import datetime, timedelta
 
 import httpx
-from fastapi import HTTPException
 
+from app.models.auth import OAuth2BodyData
 from core.constant import DiscordAPI
 
 
@@ -49,3 +49,20 @@ class AuthController:
         )
         response.raise_for_status()
 
+    async def reload(self, session_id, refresh_token) -> bool:
+        data = OAuth2BodyData(
+            client_id=self.client_id,
+            client_secret=self.client_secret,
+            grant_type="refresh_token",
+            refresh_token=refresh_token,
+        )
+        response = await self.get_token_response(data.model_)
+        if not response:
+            return False
+
+        new_token, new_refresh_token, expires_in = response
+        expire_dt = datetime.now() + timedelta(seconds=expires_in)
+
+        # TODO store session in db
+
+        return True
