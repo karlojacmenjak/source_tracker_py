@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from typing import Any, Generator
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from uvicorn import Server
 
 from api import router
@@ -20,6 +21,10 @@ def init_routers(app: FastAPI) -> None:
     app.include_router(router=router)
 
 
+def init_mount(app: FastAPI) -> None:
+    app.mount("/static", StaticFiles(directory="app/template/static"), name="static")
+
+
 def create_app() -> FastAPI:
     _app = FastAPI(
         title=AppConstants.title,
@@ -27,6 +32,7 @@ def create_app() -> FastAPI:
         lifespan=on_startup,
     )
     init_routers(app=_app)
+    init_mount(app=_app)
     return _app
 
 
