@@ -23,16 +23,16 @@ class DiscordDataController:
 
     async def get_guilds(self, token) -> list[PartialDiscordGuildModel]:
         headers = {"Authorization": f"Bearer {token}"}
+        params = (httpx.QueryParams({"with_counts": True}),)
+
         response = await self.session.get(
             DiscordAPI.api_endpoint + "/users/@me/guilds",
             headers=headers,
-            params=httpx.QueryParams({"with_counts": True}),
+            params=params,
         )
-        guilds = response.json()
-        for guild in guilds:
-            print(guild)
 
         if response.status_code == 429:
             raise HTTPException(status_code=429)
+        guilds = response.json()
 
         return [PartialDiscordGuildModel(**guild) for guild in guilds]
