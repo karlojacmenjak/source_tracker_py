@@ -26,6 +26,6 @@ class DiscordDataController:
             DiscordAPI.api_endpoint + "/users/@me/guilds", headers=headers
         )
 
-        if response.status == 429:
+        if response.status_code == 429:
             raise HTTPException(status_code=429)
         return response.json()
