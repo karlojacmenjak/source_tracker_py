@@ -15,5 +15,6 @@ class DashboardGuildData(BaseModel):
 
 
 class DashboardDataModel(BaseModel):
-
+    user_avatar: HttpUrl
+    username: str
     guilds: list[DashboardGuildData]

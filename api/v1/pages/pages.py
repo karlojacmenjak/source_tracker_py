@@ -1,9 +1,11 @@
 import os
 
+import ezcord
 from discord import Permissions
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Path, Request
 from fastapi.params import Depends
 from fastapi.responses import HTMLResponse
+from pydantic import HttpUrl
 from starlette.templating import _TemplateResponse
 
 from app.controllers import DiscordDataController, PageController
@@ -59,8 +61,20 @@ async def guilds(
         if is_admin or guild.owner:
             dashborad_guilds.append(DashboardGuildData(**guild.model_dump()))
 
+    user_avatar = HttpUrl(url=ezcord.random_avatar())
+    if user.avatar:
+        user_avatar = HttpUrl(
+            url=f"{DiscordAPI.avatars_endpoint}/{user.id}/{user.avatar}"
+        )
+    print(user_avatar)
+
     return page_controller.global_dashboard(
-        request=request, data=DashboardDataModel(guilds=dashborad_guilds)
+        request=request,
+        data=DashboardDataModel(
+            user_avatar=user_avatar,
+            username=user.global_name,
+            guilds=dashborad_guilds,
+        ),
     )
 
 
