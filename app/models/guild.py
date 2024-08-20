@@ -12,6 +12,8 @@ class PartialDiscordGuildModel(BaseModel):
     banner: str | None = None
     owner: bool | None = None
     permissions: int | None = None
+    approximate_member_count: int | None = None
+    approximate_presence_count: int | None = None
 
     @computed_field
     @property
