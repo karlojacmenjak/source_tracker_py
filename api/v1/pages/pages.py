@@ -96,3 +96,11 @@ async def server(
     print(setting)
 
     return page_controller.guild_dashboard(request)
+
+
+@pages_router.get("/404", response_class=HTMLResponse)
+def not_found(
+    request: Request,
+    page_controller: PageController = Depends(ControllerFactory.get_page_controller),
+):
+    return page_controller.page_404(request=request)

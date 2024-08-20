@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from typing import Any, Generator
 
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from uvicorn import Server
 
@@ -37,6 +38,11 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
+
+
+@app.exception_handler(404)
+async def error_redirect(_, __) -> RedirectResponse:
+    return RedirectResponse("/v1/404")
 
 
 async def run_api() -> None:

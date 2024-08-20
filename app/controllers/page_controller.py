@@ -37,3 +37,10 @@ class PageController:
             name="pages/guild_dashboard.html",
             context={},
         )
+
+    def page_404(self, request: Request) -> _TemplateResponse:
+        return self.templates.TemplateResponse(
+            request=request,
+            name="pages/page_404.html",
+            context={},
+        )
