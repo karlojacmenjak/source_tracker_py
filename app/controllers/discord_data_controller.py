@@ -1,11 +1,15 @@
 from typing import Any
 
 from fastapi import HTTPException
+from httpx import AsyncClient
 
 from core.constant import DiscordAPI
 
 
 class DiscordDataController:
+    def __init__(self, session: AsyncClient) -> None:
+        self.session = session
+
     async def get_user(self, token) -> Any:
         headers = {"Authorization": f"Bearer {token}"}
 
