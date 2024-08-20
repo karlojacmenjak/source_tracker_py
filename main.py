@@ -14,7 +14,6 @@ async def main() -> None:
     except KeyboardInterrupt:
         for t in tasks:
             t.cancel()
-        loop.close()
         print("Program exited")
         sys.exit()
 
@@ -22,4 +21,4 @@ async def main() -> None:
 loop = asyncio.get_event_loop()
 
 if __name__ == "__main__":
-    loop.run_until_complete(main())
+    asyncio.run(main())

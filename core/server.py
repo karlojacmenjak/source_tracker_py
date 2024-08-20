@@ -35,4 +35,7 @@ app = create_app()
 
 async def run_api() -> None:
     server = Server(config=UvicornConfig(app))
-    await server.serve(sockets=None)
+    try:
+        await server.serve(sockets=None)
+    finally:
+        await server.shutdown()
