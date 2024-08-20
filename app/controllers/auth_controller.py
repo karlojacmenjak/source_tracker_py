@@ -25,26 +25,6 @@ class AuthController:
     async def close(self) -> None:
         await self.session.aclose()
 
-    async def get_user(self, token) -> Any:
-        headers = {"Authorization": f"Bearer {token}"}
-
-        response = await self.session.get(
-            DiscordAPI.api_endpoint + "/users/@me", headers=headers
-        )
-
-        return response.json()
-
-    async def get_guilds(self, token) -> Any:
-        headers = {"Authorization": f"Bearer {token}"}
-
-        response = await self.session.get(
-            DiscordAPI.api_endpoint + "/users/@me/guilds", headers=headers
-        )
-
-        if response.status == 429:
-            raise HTTPException(status_code=429)
-        return response.json()
-
     async def get_token_response(self, data) -> tuple | None:
         response = await self.session.post(
             DiscordAPI.api_endpoint + "/oauth2/token", data=data
