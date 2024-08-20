@@ -22,7 +22,7 @@ def init_routers(app: FastAPI) -> None:
 
 
 def init_mount(app: FastAPI) -> None:
-    app.mount("/static", StaticFiles(directory="app/template/static"), name="static")
+    app.mount("/static", StaticFiles(directory="app/templates/static"), name="static")
 
 
 def create_app() -> FastAPI:
