@@ -23,7 +23,7 @@ class DiscordDataController:
 
     async def get_guilds(self, token) -> list[PartialDiscordGuildModel]:
         headers = {"Authorization": f"Bearer {token}"}
-        params = (httpx.QueryParams({"with_counts": True}),)
+        params = httpx.QueryParams({"with_counts": True})
 
         response = await self.session.get(
             DiscordAPI.api_endpoint + "/users/@me/guilds",

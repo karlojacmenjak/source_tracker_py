@@ -60,7 +60,14 @@
                 <img src="{{guild.guild_image_url}}" alt="guild icon" />
                 <div class="guild-info">
                   <div class="guild-name">{{guild.name}}</div>
-                  <div class="guild-users">Users: 200</div>
+                  <div class="guild-users flex gap-2">
+                    <div class="rounded-full h-2 w-2 ring-2 ring-gray-500 self-center"></div>
+                    <div>Total users: {{guild.approximate_member_count}}</div> 
+                  </div>
+                  <div class="guild-users flex gap-2">
+                    <div class="rounded-full h-2 w-2 bg-green-600 self-center "></div>
+                    <div>Active users: {{guild.approximate_presence_count}}</div>
+                  </div>
                 </div>
               </div>
             </a>
