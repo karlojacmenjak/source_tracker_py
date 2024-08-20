@@ -25,4 +25,4 @@ class PartialDiscordGuildModel(BaseModel):
     @computed_field
     @property
     def guild_dashboard_url(self) -> str:
-        return f"/server/{self.id}"
+        return f"/v1/dashboard/{self.id}"

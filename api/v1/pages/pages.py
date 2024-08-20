@@ -57,7 +57,7 @@ async def guilds(
     )
 
 
-@pages_router.get("/dashboard/{guild_id}", response_class=HTMLResponse)
+@pages_router.get("/dashboard/{guild_id}/", response_class=HTMLResponse)
 async def server(
     request: Request,
     guild_id: int,
@@ -69,5 +69,6 @@ async def server(
         raise HTTPException(status_code=401, detail="no auth")
 
     setting = await local_db.get_setting(guild_id, "example_feature")
+    print(setting)
 
     return page_controller.guild_dashboard(request)
