@@ -1,7 +1,7 @@
-from typing import Any
-
+import ezcord
 import httpx
 from fastapi import HTTPException
+from pydantic import HttpUrl
 
 from app.models.guild import PartialDiscordGuildModel
 from app.models.user import DiscordUserModel
@@ -20,6 +20,15 @@ class DiscordDataController:
         )
 
         return DiscordUserModel(**response.json())
+
+    def get_user_avatar(self, user: DiscordUserModel) -> HttpUrl:
+        user_avatar: HttpUrl = HttpUrl(url=ezcord.random_avatar())
+        if user.avatar:
+            user_avatar = HttpUrl(
+                url=f"{DiscordAPI.avatars_endpoint}/{user.id}/{user.avatar}"
+            )
+
+        return user_avatar
 
     async def get_guilds(self, token) -> list[PartialDiscordGuildModel]:
         headers = {"Authorization": f"Bearer {token}"}

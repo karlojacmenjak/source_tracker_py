@@ -38,12 +38,14 @@ class DashboardDB(ezcord.DBHandler):
         )
         return session_id
 
-    async def get_session(self, session_id) -> Any:
-        return await self.one(
+    async def get_session(self, session_id) -> tuple[None, ...] | Any | tuple | None:
+        session = await self.one(
             "SELECT token, refresh_token, token_expires_at FROM sessions WHERE session_id = ?",
             session_id,
             detect_types=1,
         )
+
+        return session
 
     async def get_user_id(self, session_id) -> Any:
         return await self.one(

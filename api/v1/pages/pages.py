@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 import ezcord
 from discord import Permissions
@@ -43,33 +44,19 @@ async def guilds(
 ) -> _TemplateResponse:
     session_id = request.cookies.get("session_id")
     session = await local_db.get_session(session_id)
-
     if not session_id or not session:
-        raise HTTPException(status_code=401, detail="no auth")
+        return RedirectResponse("/")
 
     token, refresh_token, token_expires_at = session
-
     user = await discord_data.get_user(token=token)
+
+    if datetime.now() > token_expires_at:
+        await check_session(session_id, refresh_token)
+
     user_guilds = await discord_data.get_guilds(token=token)
 
-    bot_guild_ids = bot.get_guild_ids()
-
-    dashborad_guilds: list[DashboardGuildData] = []
-
-    for guild in list(user_guilds):
-        if not guild.id in bot_guild_ids:
-            continue
-
-        is_admin = Permissions(guild.permissions).administrator
-        if is_admin or guild.owner:
-            dashborad_guilds.append(DashboardGuildData(**guild.model_dump()))
-
-    user_avatar = HttpUrl(url=ezcord.random_avatar())
-    if user.avatar:
-        user_avatar = HttpUrl(
-            url=f"{DiscordAPI.avatars_endpoint}/{user.id}/{user.avatar}"
-        )
-    print(user_avatar)
+    dashborad_guilds = filter_guilds(user_guilds)
+    user_avatar = discord_data.get_user_avatar(user)
 
     return page_controller.global_dashboard(
         request=request,
@@ -104,3 +91,28 @@ def not_found(
     page_controller: PageController = Depends(ControllerFactory.get_page_controller),
 ):
     return page_controller.page_404(request=request)
+
+
+async def check_session(session_id, refresh_token):
+    api = ControllerFactory.get_auth_controller()
+    await api.setup()
+
+    if await api.reload(session_id, refresh_token):
+        RedirectResponse(url="/guilds")
+    else:
+        RedirectResponse(url="/logout")
+
+
+def filter_guilds(user_guilds) -> list[DashboardGuildData]:
+    bot_guild_ids = bot.get_guild_ids()
+    dashborad_guilds: list[DashboardGuildData] = []
+
+    for guild in list(user_guilds):
+        if not guild.id in bot_guild_ids:
+            continue
+
+        is_admin = Permissions(guild.permissions).administrator
+        if is_admin or guild.owner:
+            dashborad_guilds.append(DashboardGuildData(**guild.model_dump()))
+
+    return dashborad_guilds
