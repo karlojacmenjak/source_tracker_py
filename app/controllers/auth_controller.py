@@ -40,3 +40,12 @@ class AuthController:
 
         return access_token, refresh_token, expires_in
 
+    async def revoke_token(self, token) -> None:
+        response = await self.session.post(
+            DiscordAPI.api_endpoint + "/oauth2/token/revoke",
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+            data={"token": token},
+            auth=self.auth,
+        )
+        response.raise_for_status()
+
