@@ -1,19 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Source Tracker Demo</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
+    <style type="text/tailwindcss">
+      .btn-primary {
+        @apply py-2 px-5 bg-rose-700 text-white rounded-full
+        hover:bg-rose-800 focus:outline-none focus:ring focus:ring-yellow-400;
+      }
+    </style>
+  </head>
 
-<body>
-    <h1>Hello world!</h1>
-    <article>We are serving {{guild_count}} Discord servers!</article>
-    <a href={{login_url}}>
-        <button>Login Here</Button>
-    </a>
-</body>
+  <body class="bg-neutral-950 text-slate-200">
+    <header class="bg-rose-700 p-4">
+      <h1 class="text-2xl">Source Tracker Demo</h1>
+    </header>
 
+    <main class="h-[80vh]">
+      <div class="flex items-center justify-center h-full">
+        <div class="bg-neutral-900 rounded-2xl p-4">
+          <h2 class="text-xl">Hello world!</h2>
+          <a href="{{login_url}}">
+            <button class="btn-primary mt-4">Discord login</button>
+          </a>
+          <p class="mt-4">We are serving {{guild_count}} Discord Guilds!</p>
+        </div>
+      </div>
+    </main>
+  </body>
 </html>
