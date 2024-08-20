@@ -2,7 +2,7 @@ from fastapi.requests import Request
 from fastapi.templating import Jinja2Templates
 from starlette.templating import _TemplateResponse
 
-from app.templates.data_models import MainDataModel
+from app.models.template import MainDataModel
 
 
 class PageController:
