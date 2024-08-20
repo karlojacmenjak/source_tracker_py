@@ -6,11 +6,10 @@ from fastapi.responses import RedirectResponse
 
 from app.controllers.auth_controller import AuthController
 from app.controllers.discord_data_controller import DiscordDataController
+from app.models.auth_models import OAuth2BodyData
 from core.constant import AppConstants, DiscordAPI
 from core.database.local_database import db
 from core.factory.controller_factory import ControllerFactory
-
-from .models.auth_models import OAuth2BodyData
 
 oauth2_router = APIRouter()
 

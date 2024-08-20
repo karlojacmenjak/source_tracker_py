@@ -7,7 +7,7 @@ from starlette.templating import _TemplateResponse
 
 from app.controllers import DiscordDataController, PageController
 from app.discord.bot import bot
-from app.templates.data_models import MainDataModel
+from app.models.template import MainDataModel
 from core.constant import DiscordAPI
 from core.database.local_database import db
 from core.factory.controller_factory import ControllerFactory
