@@ -45,6 +45,6 @@ async def guilds(
 
     user = await discord_data.get_user(token=token)
     user_guilds = await discord_data.get_guilds(token=token)
-    print(user.global_name, len(user_guilds))
+    print(user.global_name, user_guilds)
 
     return page_controller.global_dashboard(request=request)

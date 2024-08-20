@@ -3,6 +3,7 @@ from typing import Any
 import httpx
 from fastapi import HTTPException
 
+from app.models.guild import PartialDiscordGuildModel
 from app.models.user import DiscordUserModel
 from core.constant import DiscordAPI
 
@@ -20,7 +21,7 @@ class DiscordDataController:
 
         return DiscordUserModel(**response.json())
 
-    async def get_guilds(self, token) -> Any:
+    async def get_guilds(self, token) -> list[PartialDiscordGuildModel]:
         headers = {"Authorization": f"Bearer {token}"}
 
         response = await self.session.get(
@@ -29,4 +30,4 @@ class DiscordDataController:
 
         if response.status_code == 429:
             raise HTTPException(status_code=429)
-        return response.json()
+        return [PartialDiscordGuildModel(**guild) for guild in response.json()]
