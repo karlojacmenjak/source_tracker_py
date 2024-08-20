@@ -1,6 +1,6 @@
 import os
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Cookie, HTTPException
 from fastapi.params import Depends
 from fastapi.responses import RedirectResponse
 
@@ -52,4 +52,26 @@ async def callback(
     )
 
     await discord_api.close()
+    return response
+
+
+@oauth2_router.get("/logout")
+async def logout(
+    session_id: str = Cookie(None),
+    discord_api: AuthController = Depends(ControllerFactory.get_auth_controller),
+) -> RedirectResponse:
+    await discord_api.setup()
+
+    session = await local_db.get_session(session_id)
+    if not session_id or not session:
+        raise HTTPException(status_code=401, detail="no auth")
+
+    token, _, _ = session
+
+    response = RedirectResponse("/")
+    response.delete_cookie(key="session_id", httponly=True)
+
+    await local_db.delete_session(session_id)
+    await discord_api.revoke_token(token)
+
     return response
