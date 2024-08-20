@@ -1,6 +1,6 @@
 import os
 
-from app.controllers import AuthController, PageController
+from app.controllers import AuthController, DiscordDataController, PageController
 from core.constant import DiscordAPI
 
 
@@ -17,3 +17,7 @@ class ControllerFactory:
             client_secret=os.environ[DiscordAPI.client_secret],
             redirect_uri=DiscordAPI.redirect_uri,
         )
+
+    @staticmethod
+    def get_discord_data_controller() -> DiscordDataController:
+        return DiscordDataController()
