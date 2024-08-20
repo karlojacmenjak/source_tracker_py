@@ -13,7 +13,9 @@ oauth2_router = APIRouter()
 
 @oauth2_router.get("/callback")
 async def callback(
-    code: str, discord_api=Depends(ControllerFactory.get_auth_controller)
+    code: str,
+    discord_api=Depends(ControllerFactory.get_auth_controller),
+    discord_data=Depends(ControllerFactory.get_discord_data_controller),
 ) -> RedirectResponse:
     await discord_api.setup()
 
@@ -30,7 +32,7 @@ async def callback(
         raise HTTPException(status_code=401, detail="Invalid Auth Code")
 
     token, refresh_token, expires_in = result
-    user = await discord_api.get_user(token)
+    user = await discord_data.get_user(token)
     user_id = user.get("id")
 
     # TODO Store session in dp
