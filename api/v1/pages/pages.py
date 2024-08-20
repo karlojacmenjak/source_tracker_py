@@ -55,3 +55,17 @@ async def guilds(
     return page_controller.global_dashboard(
         request=request, data=DashboardDataModel(guilds=user_guilds)
     )
+
+
+@pages_router.get("/dashboard/{guild_id}", response_class=HTMLResponse)
+async def server(
+    request: Request,
+    guild_id: int,
+    page_controller: PageController = Depends(ControllerFactory.get_page_controller),
+) -> _TemplateResponse:
+    session_id = request.cookies.get("session_id")
+
+    if not session_id or not await db.get_session(session_id):
+        raise HTTPException(status_code=401, detail="no auth")
+
+    return page_controller.guild_dashboard(request)

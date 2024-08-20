@@ -8,10 +8,12 @@
 <body>
     <div>
         {% for guild in guilds %}
-        <div class="item">
-            <img class="title" src="{{guild.guild_image_url}}">
-            <p class="title"> <b>{{ guild.name }}</b> </p>
-        </div>
+        <a href={{guild.guild_dashboard_url}}>
+            <div class="item">
+                <img class="title" src="{{guild.guild_image_url}}">
+                <p class="title"> <b>{{ guild.name }}</b> </p>
+            </div>
+        </a>
         {% endfor %}
     </div>
 </body>

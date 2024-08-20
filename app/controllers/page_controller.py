@@ -17,11 +17,23 @@ class PageController:
         )
 
     def global_dashboard(
-        self, request: Request, data: DashboardDataModel
+        self,
+        request: Request,
+        data: DashboardDataModel,
     ) -> _TemplateResponse:
 
         return self.templates.TemplateResponse(
             request=request,
             name="pages/global_dashboard.html",
             context=data.model_dump(),
+        )
+
+    def guild_dashboard(
+        self,
+        request: Request,
+    ) -> _TemplateResponse:
+        return self.templates.TemplateResponse(
+            request=request,
+            name="pages/guild_dashboard.html",
+            context={},
         )

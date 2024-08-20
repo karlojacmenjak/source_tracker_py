@@ -17,5 +17,10 @@ class PartialDiscordGuildModel(BaseModel):
     @property
     def guild_image_url(self) -> HttpUrl:
         if self.icon:
-            return HttpUrl(url=f"/{DiscordAPI.icons_endpoint}/{self.id}/{self.icon}")
+            return HttpUrl(url=f"{DiscordAPI.icons_endpoint}/{self.id}/{self.icon}")
         return HttpUrl(url=DiscordAPI.default_avatar_url)
+
+    @computed_field
+    @property
+    def guild_dashboard_url(self) -> str:
+        return f"/server/{self.id}"
