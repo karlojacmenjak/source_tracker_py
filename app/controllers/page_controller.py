@@ -13,16 +13,15 @@ class PageController:
         return self.templates.TemplateResponse(
             request=request,
             name="index.html",
-            context=data.__dict__,
+            context=data.model_dump(),
         )
 
     def global_dashboard(
         self, request: Request, data: DashboardDataModel
     ) -> _TemplateResponse:
 
-        print(data.__dict__)
         return self.templates.TemplateResponse(
             request=request,
             name="pages/global_dashboard.html",
-            context={},
+            context=data.model_dump(),
         )

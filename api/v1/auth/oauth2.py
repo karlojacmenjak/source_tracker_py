@@ -32,7 +32,7 @@ async def callback(
         code=code,
     )
 
-    result = await discord_api.get_token_response(data.__dict__)
+    result = await discord_api.get_token_response(data.model_dump())
     if result is None:
         raise HTTPException(status_code=401, detail="Invalid Auth Code")
 

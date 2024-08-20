@@ -7,7 +7,7 @@ from starlette.templating import _TemplateResponse
 
 from app.controllers import DiscordDataController, PageController
 from app.discord.bot import bot
-from app.models.template import MainDataModel
+from app.models.template import DashboardDataModel, MainDataModel
 from core.constant import DiscordAPI
 from core.database.local_database import db
 from core.factory.controller_factory import ControllerFactory
@@ -47,4 +47,6 @@ async def guilds(
     user_guilds = await discord_data.get_guilds(token=token)
     print(user.global_name, user_guilds)
 
-    return page_controller.global_dashboard(request=request, data=user_guilds)
+    return page_controller.global_dashboard(
+        request=request, data=DashboardDataModel(guilds=user_guilds)
+    )
