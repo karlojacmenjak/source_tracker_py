@@ -2,9 +2,9 @@ import os
 
 import ezcord
 from discord import Permissions
-from fastapi import APIRouter, HTTPException, Path, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.params import Depends
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from pydantic import HttpUrl
 from starlette.templating import _TemplateResponse
 
@@ -18,14 +18,17 @@ from core.factory.controller_factory import ControllerFactory
 pages_router = APIRouter()
 
 
-@pages_router.get("/", response_class=HTMLResponse)
+@pages_router.get("/")
 async def main(
     request: Request,
     page_controller: PageController = Depends(ControllerFactory.get_page_controller),
-) -> HTMLResponse:
+):
     data = MainDataModel(
         guild_count=bot.guild_count(), login_url=os.environ[DiscordAPI.login_url]
     )
+    session_id = request.cookies.get("session_id")
+    if session_id and await local_db.get_session(session_id):
+        return RedirectResponse(url="/v1/dashboard")
 
     return page_controller.main(request=request, data=data)
 
