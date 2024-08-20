@@ -1,5 +1,6 @@
 import os
 
+from discord import Permissions
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.params import Depends
 from fastapi.responses import HTMLResponse
@@ -45,7 +46,11 @@ async def guilds(
 
     user = await discord_data.get_user(token=token)
     user_guilds = await discord_data.get_guilds(token=token)
-    print(user.global_name, user_guilds)
+
+    for guild in list(user_guilds):
+        is_admin = Permissions(guild.permissions).administrator
+        if not (is_admin or guild.owner):
+            user_guilds.remove(guild)
 
     return page_controller.global_dashboard(
         request=request, data=DashboardDataModel(guilds=user_guilds)
