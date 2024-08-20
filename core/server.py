@@ -7,12 +7,12 @@ from uvicorn import Server
 
 from api import router
 from core.constant import AppConstants, UvicornConfig
-from core.database.local_database import db
+from core.database.local_database import local_db
 
 
 @asynccontextmanager
 async def on_startup(app: FastAPI) -> Generator[None, Any, None]:  # type: ignore
-    await db.setup()
+    await local_db.setup()
 
     yield
 

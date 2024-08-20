@@ -79,4 +79,4 @@ class DashboardDB(ezcord.DBHandler):
         )
 
 
-db = DashboardDB()
+local_db = DashboardDB()

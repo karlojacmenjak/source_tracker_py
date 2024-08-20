@@ -8,7 +8,7 @@ from app.controllers.auth_controller import AuthController
 from app.controllers.discord_data_controller import DiscordDataController
 from app.models.auth import OAuth2BodyData
 from core.constant import AppConstants, DiscordAPI
-from core.database.local_database import db
+from core.database.local_database import local_db
 from core.factory.controller_factory import ControllerFactory
 
 oauth2_router = APIRouter()
@@ -41,7 +41,7 @@ async def callback(
     user_id = user.id
 
     # TODO Store session in dp
-    session_id = await db.add_session(token, refresh_token, expires_in, user_id)
+    session_id = await local_db.add_session(token, refresh_token, expires_in, user_id)
 
     response = RedirectResponse(url="/v1/dashboard")
     response.set_cookie(

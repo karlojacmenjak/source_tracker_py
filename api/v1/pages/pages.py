@@ -10,7 +10,7 @@ from app.controllers import DiscordDataController, PageController
 from app.discord.bot import bot
 from app.models.template import DashboardDataModel, MainDataModel
 from core.constant import DiscordAPI
-from core.database.local_database import db
+from core.database.local_database import local_db
 from core.factory.controller_factory import ControllerFactory
 
 pages_router = APIRouter()
@@ -37,7 +37,7 @@ async def guilds(
     ),
 ) -> _TemplateResponse:
     session_id = request.cookies.get("session_id")
-    session = await db.get_session(session_id)
+    session = await local_db.get_session(session_id)
 
     if not session_id or not session:
         raise HTTPException(status_code=401, detail="no auth")
@@ -65,7 +65,9 @@ async def server(
 ) -> _TemplateResponse:
     session_id = request.cookies.get("session_id")
 
-    if not session_id or not await db.get_session(session_id):
+    if not session_id or not await local_db.get_session(session_id):
         raise HTTPException(status_code=401, detail="no auth")
+
+    setting = await local_db.get_setting(guild_id, "example_feature")
 
     return page_controller.guild_dashboard(request)
