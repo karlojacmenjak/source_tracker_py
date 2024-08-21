@@ -15,6 +15,7 @@ class DiscordAPI:
     icons_endpoint = "https://cdn.discordapp.com/icons"
     avatars_endpoint = "https://cdn.discordapp.com/avatars"
     default_avatar_url = "https://cdn.discordapp.com/embed/avatars/0.png"
+    bot_invite_link = "BOT_INVITE_LINK"
     client_id = "CLIENT_ID"
     client_secret = "CLIENT_SECRET"
     login_url = "LOGIN_URL"
