@@ -1,13 +1,16 @@
 import os
 
+import discord
 from discord import Bot
 
-from core.constant import DiscordAPI
+from core.constant import AppConstants, DiscordAPI
 
 
 class SourceTrackerBot(Bot):
     def __init__(self, description=None, *args, **options) -> None:
-        super().__init__(description, *args, **options)
+        intents = discord.Intents.default()
+        intents.members = AppConstants.production
+        super().__init__(intents=intents, description=description, *args, **options)
 
     async def on_ready(self) -> None:
         print(
@@ -17,7 +20,7 @@ class SourceTrackerBot(Bot):
         )
 
     def guild_count(self) -> int:
-        return len(self.guilds)
+        return self.guilds.__len__()
 
     def get_guild_ids(self) -> list[int]:
         return [guild.id for guild in self.guilds]

@@ -2,6 +2,7 @@ import asyncio
 import sys
 
 from app.discord import run_bot
+from core.constant import AppConstants
 from core.server import run_api
 
 
@@ -18,7 +19,9 @@ async def main() -> None:
         sys.exit()
 
 
-loop = asyncio.get_event_loop()
-
 if __name__ == "__main__":
-    asyncio.run(main())
+    if AppConstants.production:
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
+    else:
+        asyncio.run(main())
