@@ -70,6 +70,11 @@
                     <div class="rounded-full h-2 w-2 bg-green-600 self-center "></div>
                     <div>Active users: {{guild.approximate_presence_count}}</div>
                   </div>
+                  <div class="guild-users flex gap-2">
+                    {%if guild.bot_not_invited %}
+                      <div>Bot not invited!</div>
+                    {% endif %}
+                  </div>
                 </div>
               </div>
             </a>

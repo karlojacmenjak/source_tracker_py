@@ -108,11 +108,21 @@ def filter_guilds(user_guilds) -> list[DashboardGuildData]:
     dashborad_guilds: list[DashboardGuildData] = []
 
     for guild in list(user_guilds):
-        if not guild.id in bot_guild_ids:
-            continue
+        bot_not_invited = False
+
+        if not int(guild.id) in bot_guild_ids:
+            bot_not_invited = True
+            invite_url = os.environ[DiscordAPI.bot_invite_link]
 
         is_admin = Permissions(guild.permissions).administrator
         if is_admin or guild.owner:
-            dashborad_guilds.append(DashboardGuildData(**guild.model_dump()))
+
+            dashborad_guilds.append(
+                DashboardGuildData(
+                    bot_not_invited=bot_not_invited,
+                    invite_url=invite_url,
+                    **guild.model_dump()
+                )
+            )
 
     return dashborad_guilds
