@@ -1,11 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Source Tracker Demo</title>
-</head>
-<body>
-    Error 404 - page not found!
-</body>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+  </head>
+
+  <body class="bg-neutral-950 text-slate-200">
+    <header class="bg-rose-700 p-4">
+      <a href="/v1/dashboard">
+        <h1 class="text-2xl">Source Tracker Demo</h1>
+      </a>
+    </header>
+
+    <main class="h-[80vh]">
+      <div class="flex items-center justify-center h-full">
+        <div class="bg-neutral-900 rounded-2xl p-8">
+          <h2 class="text-2xl">404 Not Found</h2>
+          <div class="mt-4"><span>Go to </span><a class="underline" href="/v1/dashboard">Dashboard page</a></div>
+        </div>
+      </div>
+    </main>
+  </body>
 </html>
