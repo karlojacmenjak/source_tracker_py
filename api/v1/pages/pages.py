@@ -18,7 +18,7 @@ from app.models.template import (
     GuildDisplayData,
     MainDataModel,
 )
-from core.constant import DiscordAPI
+from core.constant import DashboardConstants, DiscordAPI
 from core.database.local_database import local_db
 from core.factory.controller_factory import ControllerFactory
 
@@ -89,10 +89,19 @@ async def dashboard(
     if not session_id or not await local_db.get_session(session_id):
         return RedirectResponse("/")
 
-    token, refresh_token, token_expires_at = session
+    token, _, _ = session
 
     user = await discord_data.get_user(token=token)
     user_avatar = discord_data.get_user_avatar(user)
+
+    settings = await local_db.get_settings(guild_id)
+    enable_features = False
+    check_period = DashboardConstants.check_period_min
+
+    if settings:
+        _, enable_features, check_period = settings
+
+    print(check_period, enable_features)
 
     bot_invited = bot.is_in_guild(guild_id=guild_id)
     invite_url = HttpUrl(url=os.environ[DiscordAPI.bot_invite_link])
@@ -101,21 +110,11 @@ async def dashboard(
         guild_id=guild_id,
         user_avatar=user_avatar,
         username=user.global_name,
-        is_enabled=True,
-        check_period=30,
+        is_enabled=enable_features,
+        check_period=check_period,
         bot_invited=bot_invited,
         invite_url=invite_url,
-        game_servers=[
-            GameServer(ip="helloworld", port="12"),
-            GameServer(ip="helloworld", port="12"),
-            GameServer(ip="helloworld", port="12"),
-            GameServer(ip="helloworld", port="12"),
-            GameServer(ip="helloworld", port="12"),
-            GameServer(ip="helloworld", port="12"),
-            GameServer(ip="helloworld", port="12"),
-            GameServer(ip="helloworld", port="12"),
-            GameServer(ip="helloworld", port="12"),
-        ],
+        game_servers=[GameServer(ip="helloworld", port="12") for _ in range(5)],
     )
 
     return page_controller.guild_dashboard(request=request, data=data)
@@ -123,7 +122,7 @@ async def dashboard(
 
 @pages_router.post("/dashboard/{guild_id}/settings")
 async def change_settings(
-    guild_id: int, settings: DashboardSettings, session_id: str = Cookie(None)
+    guild_id: int, new_settings: DashboardSettings, session_id: str = Cookie(None)
 ):
     user_id = await local_db.get_user_id(session_id)
 
@@ -131,12 +130,25 @@ async def change_settings(
         raise HTTPException(status_code=401, detail="No authorization")
 
     perms = bot.check_perms(guild_id=guild_id, user_id=user_id)
-    if perms:
-        print(settings)
-    else:
+
+    if not perms:
         return JSONResponse(
             status_code=401, content="You do not have access to this guild"
         )
+
+    settings = await local_db.exists_settings(guild_id=guild_id)
+    print(
+        "new_settings",
+        new_settings.check_period,
+        new_settings.enable_features,
+        new_settings.guild_id,
+    )
+    if settings:
+        new_settings.guild_id = guild_id
+        await local_db.update_settings(new_settings)
+    else:
+        new_settings.guild_id = guild_id
+        await local_db.add_settings(new_settings)
 
 
 @pages_router.get("/404", response_class=HTMLResponse)

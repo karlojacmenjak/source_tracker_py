@@ -4,6 +4,8 @@ from typing import Any
 
 import ezcord
 
+from app.models.form import DashboardSettings
+
 
 class DashboardDB(ezcord.DBHandler):
     def __init__(self) -> None:
@@ -37,10 +39,12 @@ class DashboardDB(ezcord.DBHandler):
 
         await self.exec(
             """CREATE TABLE IF NOT EXISTS game_servers (
-            server_id INTEGER INTEGER PRIMARY KEY,
+            server_id INTEGER PRIMARY KEY,
             server_name TEXT,
             address TEXT,
-            port INTEGER
+            port INTEGER,
+            last_data_feth TIMESTAMP,
+            last_response TEXT
             )"""
         )
 
@@ -80,6 +84,36 @@ class DashboardDB(ezcord.DBHandler):
 
     async def delete_session(self, session_id):
         await self.exec("DELETE FROM sessions WHERE session_id = ?", session_id)
+
+    async def add_settings(self, settings: DashboardSettings):
+        await self.exec(
+            """INSERT OR REPLACE INTO settings (guild_id, enable_features, check_period) VALUES (?, ?, ?)""",
+            (settings.guild_id, settings.enable_features, settings.check_period),
+        )
+
+    async def exists_settings(self, guild_id: int):
+        return await self.one(
+            "SELECT EXISTS(SELECT 1 FROM settings WHERE guild_id = ?)", guild_id
+        )
+
+    async def get_settings(self, guild_id: int):
+        return await self.one(
+            "SELECT guild_id, enable_features, check_period FROM settings WHERE guild_id = ?",
+            guild_id,
+        )
+
+    async def update_settings(self, settings: DashboardSettings) -> None:
+        print(
+            "update_settings",
+            settings.check_period,
+            settings.enable_features,
+            settings.guild_id,
+        )
+        await self.exec(
+            "UPDATE settings SET enable_features = ?, check_period = ? WHERE guild_id = ?",
+            (settings.enable_features, settings.check_period, settings.guild_id),
+            detect_types=1,
+        )
 
 
 local_db = DashboardDB()

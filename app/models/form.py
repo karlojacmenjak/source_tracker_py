@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from pydantic_core import Url
 
 
 class GameServer(BaseModel):
@@ -8,6 +7,7 @@ class GameServer(BaseModel):
 
 
 class DashboardSettings(BaseModel):
+    guild_id: int | None = None
     check_period: int
     enable_features: bool
     game_server_list: list[GameServer]
