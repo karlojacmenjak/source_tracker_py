@@ -39,6 +39,10 @@ class DashboardDB(ezcord.DBHandler):
         )
 
         await self.exec(
+            "CREATE UNIQUE INDEX IF NOT EXISTS guild_game_server ON settings_game_servers (guild_id,server_id)"
+        )
+
+        await self.exec(
             """CREATE TABLE IF NOT EXISTS game_servers (
             server_id INTEGER PRIMARY KEY,
             server_name TEXT,
@@ -97,10 +101,15 @@ class DashboardDB(ezcord.DBHandler):
             "SELECT EXISTS(SELECT 1 FROM settings WHERE guild_id = ?)", guild_id
         )
 
-    async def get_settings(self, guild_id: int):
+    async def get_bot_settings(self, guild_id: int):
         return await self.one(
             "SELECT guild_id, enable_features, check_period FROM settings WHERE guild_id = ?",
             guild_id,
+        )
+
+    async def get_game_servers(self, guild_id: int):
+        return await self.all(
+            "SELECT * FROM game_servers WHERE guild_id = ?", (guild_id)
         )
 
     async def update_dashboard_settings(self, settings: DashboardSettings) -> None:
@@ -135,6 +144,7 @@ class DashboardDB(ezcord.DBHandler):
         await self.executemany(
             """INSERT INTO settings_game_servers (guild_id, server_id) 
             SELECT ?, server_id FROM game_servers WHERE address = ? AND port = ?
+            ON CONFLICT(guild_id, server_id) DO NOTHING;
             """,
             [
                 (settings.guild_id, server.address, server.port)
