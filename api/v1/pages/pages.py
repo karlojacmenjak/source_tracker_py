@@ -95,6 +95,8 @@ async def dashboard(
     user_avatar = discord_data.get_user_avatar(user)
 
     settings = await local_db.get_bot_settings(guild_id)
+    game_servers = await local_db.get_game_servers(guild_id)
+
     enable_features = False
     check_period = DashboardConstants.check_period_min
 
@@ -112,9 +114,7 @@ async def dashboard(
         check_period=check_period,
         bot_invited=bot_invited,
         invite_url=invite_url,
-        game_servers=[
-            GameServer(ip="frk-1.de.uncletopia.com", port=27015) for _ in range(5)
-        ],
+        game_servers=game_servers,
     )
 
     return page_controller.guild_dashboard(request=request, data=data)

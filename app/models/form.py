@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class GameServer(BaseModel, frozen=True):
-    ip: str
+    address: str
     port: int
 
 

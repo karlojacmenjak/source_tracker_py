@@ -64,21 +64,21 @@ function parseGameServerInput(data) {
 
   let regFull = /([a-zA-Z0-9\-\_\.]+)\s*:\s*(\d+)/gm;
   if(!regFull.test(data)) {
-    throw new Error("Invalid format for game server. Expected format is IP:PORT. Actual value: " + data);
+    throw new Error("Invalid format for game server. Expected format is address:PORT. Actual value: " + data);
   }
   let result = data.split(":");
 
-  let ip = result[0].trim();
+  let address = result[0].trim();
   let port = result[1].trim();
 
   let regDomain = /[a-zA-Z0-9\-\_]+(\.[a-zA-Z0-9\-\_]+)*/gm;
-  let regIp4 = /\d+\.\d+\.\d+\.\d+/gm;
+  let regaddress4 = /\d+\.\d+\.\d+\.\d+/gm;
 
-  if (!ip.match(regDomain) && !ip.match(regIp4)) {
-    throw new Error("Invalid format for game server ip. Expected value is either domain or IPv4 address. Actual value: " + data);
+  if (!address.match(regDomain) && !address.match(regaddress4)) {
+    throw new Error("Invalid format for game server address. Expected value is either domain or addressv4 address. Actual value: " + data);
   }
 
-  return { ip: ip, port: port };
+  return { address: address, port: port };
 }
 
 function refreshForm() {
@@ -93,7 +93,7 @@ function refreshForm() {
     let input = document.createElement("input");
     input.type = "text";
     input.spellcheck = "false";
-    input.placeholder = "ip:port";
+    input.placeholder = "address:port";
     input.value = serverList[i];
     input.addEventListener("input", () => {
       serverList[i] = input.value;

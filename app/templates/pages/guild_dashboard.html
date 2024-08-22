@@ -97,7 +97,7 @@
               {% for server in game_servers %}
 
               <div class="list-item">
-                <input type="text" spellcheck="false" placeholder="ip:port" value="{{server.ip}}:{{server.port}}" />
+                <input type="text" spellcheck="false" placeholder="address:port" value="{{server.address}}:{{server.port}}"/>
                 <button type="button" class="btn-icon"><img src="/static/icon-xmark.png" /></button>
               </div>
 
@@ -106,7 +106,7 @@
             </div>
 
             <div class="list-item">
-              <input id="txtServerData" type="text" spellcheck="false" placeholder="ip:port" />
+              <input id="txtServerData" type="text" spellcheck="false" placeholder="address:port" />
               <button id="btnAddServer" type="button" class="btn-icon"><img src="/static/icon-add.png" /></button>
             </div>
           </div>

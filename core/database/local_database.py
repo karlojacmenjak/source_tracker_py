@@ -4,7 +4,7 @@ from typing import Any
 
 import ezcord
 
-from app.models.form import DashboardSettings
+from app.models.form import DashboardSettings, GameServer
 from core.factory.controller_factory import ControllerFactory
 
 
@@ -108,9 +108,16 @@ class DashboardDB(ezcord.DBHandler):
         )
 
     async def get_game_servers(self, guild_id: int):
-        return await self.all(
-            "SELECT * FROM game_servers WHERE guild_id = ?", (guild_id)
+        results = await self.all(
+            """SELECT server_name, address, port FROM game_servers gs
+            LEFT JOIN settings_game_servers sgs ON 
+            gs.server_id = sgs.server_id WHERE
+            sgs.guild_id = ?
+            """,
+            (guild_id),
         )
+
+        return [GameServer(address=r[1], port=r[2]) for r in results]
 
     async def update_dashboard_settings(self, settings: DashboardSettings) -> None:
         validator = ControllerFactory.get_gameserver_controller()
@@ -139,6 +146,10 @@ class DashboardDB(ezcord.DBHandler):
                 )
                 for server in valid_servers
             ],
+        )
+
+        await self.exec(
+            "DELETE FROM settings_game_servers WHERE guild_id = ?", (settings.guild_id)
         )
 
         await self.executemany(

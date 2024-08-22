@@ -15,19 +15,18 @@ class GameServerController:
         valid_game_servers: list[ValidGameServers] = []
         game_servers = set(game_servers)
 
-        for server in game_servers:
+        for server in [*game_servers]:
             try:
-                hostname = (server.ip, server.port)
+                hostname = (server.address, server.port)
                 fetched_info: SourceInfo | GoldSrcInfo = await a2s.ainfo(hostname)
 
                 valid_server = ValidGameServers(**self.to_dict(fetched_info))
-                valid_server.address = server.ip
+                valid_server.address = server.address
                 valid_server.port = server.port
 
                 valid_game_servers.append(valid_server)
-            except socket.gaierror as e:
-                print(type(e).__name__, e)
-                game_servers.remove((server))
+            except Exception as e:
+                game_servers.remove(server)
         return valid_game_servers
 
     def to_dict(self, instance: SourceInfo | GoldSrcInfo) -> dict:
