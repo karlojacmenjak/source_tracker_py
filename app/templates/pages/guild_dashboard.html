@@ -85,7 +85,7 @@
           <div class="mt-4">
             <p class="text-xl">Check period</p>
 
-            <input type="range" id="checkPeriod" min="5" max="60" value={{check_period}} step="5" class="w-[200px]" />
+            <input type="range" id="checkPeriod" min="5" max="60" value="{{check_period}}" step="5" class="w-[200px]" />
             <label id="checkPeriodLabel" for="checkPeriod"></label>
           </div>
 
@@ -111,7 +111,7 @@
           </div>
 
           <div class="mt-8">
-            <button type="submit" class="btn-primary">Save</button>
+            <button id="btnSave" type="button" class="btn-primary">Save</button>
           </div>
           {% endif %}
         </div>

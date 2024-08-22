@@ -8,7 +8,7 @@ class AppConstants:
     host = "localhost"
     port = 8000
     https_secure_mode = True
-    production = False
+    production = True
 
 
 class DashboardConstants:

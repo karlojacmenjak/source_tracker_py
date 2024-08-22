@@ -1,4 +1,4 @@
-let checkPeriod;
+let checkPeriodRange;
 let checkPeriodLabel;
 let serverListDiv;
 let serverList;
@@ -6,8 +6,8 @@ let serverList;
 document.addEventListener("DOMContentLoaded", () => init());
 
 function init() {
-  checkPeriod = document.getElementById("checkPeriod");
-  checkPeriod.addEventListener("input", () => {
+  checkPeriodRange = document.getElementById("checkPeriod");
+  checkPeriodRange.addEventListener("input", () => {
     refreshForm();
   });
 
@@ -25,14 +25,22 @@ function init() {
   let btnAddServer = document.getElementById("btnAddServer");
 
   btnAddServer.addEventListener("click", () => {
-    let server = txtServerData.value;
+    let server = txtServerData.value.trim();
 
     try {
-      server = parseGameServerInput(server);
-
+      parseGameServerInput(server);
       serverList.push(server);
       txtServerData.value = "";
       refreshForm();
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+
+  let btnSave = document.getElementById("btnSave");
+  btnSave.addEventListener("click", async () => {
+    try {
+      await saveData();
     } catch (error) {
       alert(error.message);
     }
@@ -55,14 +63,13 @@ function parseGameServerInput(data) {
   data = data.trim();
 
   let regFull = /([a-zA-Z0-9\-\_\.]+)\s*:\s*(\d+)/gm;
-  let result = data.matchAll(regFull).toArray()[0];
-
-  if (result == undefined) {
+  if(!regFull.test(data)) {
     throw new Error("Invalid format for game server. Expected format is IP:PORT. Actual value: " + data);
   }
+  let result = data.split(":");
 
-  let ip = result[1].trim();
-  let port = result[2].trim();
+  let ip = result[0].trim();
+  let port = result[1].trim();
 
   let regDomain = /[a-zA-Z0-9\-\_]+(\.[a-zA-Z0-9\-\_]+)*/gm;
   let regIp4 = /\d+\.\d+\.\d+\.\d+/gm;
@@ -71,21 +78,71 @@ function parseGameServerInput(data) {
     throw new Error("Invalid format for game server ip. Expected value is either domain or IPv4 address. Actual value: " + data);
   }
 
-  return ip + ":" + port;
+  return { ip: ip, port: port };
 }
 
 function refreshForm() {
-  checkPeriodLabel.innerText = checkPeriod.value + " min";
+  checkPeriodLabel.innerText = checkPeriodRange.value + " min";
 
-  let serverListHtml = "";
+  serverListDiv.innerHTML = "";
+
   for (let i = 0; i < serverList.length; i++) {
-    serverListHtml += `
-    <div class="list-item">
-      <input type="text" spellcheck="false" placeholder="ip:port" value="${serverList[i]}" />
-      <button type="button" onclick="removeServerItem(${i})" class="btn-icon"><img src="/static/icon-xmark.png" /></button>
-    </div>
-    `;
+    let divListItem = document.createElement("div");
+    divListItem.className = "list-item";
+
+    let input = document.createElement("input");
+    input.type = "text";
+    input.spellcheck = "false";
+    input.placeholder = "ip:port";
+    input.value = serverList[i];
+    input.addEventListener("input", () => {
+      serverList[i] = input.value;
+    });
+
+    let btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn-icon";
+    btn.innerHTML = '<img src="/static/icon-xmark.png"/>';
+    btn.addEventListener("click", () => removeServerItem(i));
+
+    divListItem.append(input);
+    divListItem.append(btn);
+
+    serverListDiv.append(divListItem);
+  }
+}
+
+async function saveData() {
+  let rbStatusEnabled = document.getElementById("statusEnabled");
+
+  let botEnabled = rbStatusEnabled.checked;
+  let checkPeriod = checkPeriodRange.value;
+  let servers = [];
+
+  for (let i = 0; i < serverList.length; i++) {
+    servers.push(parseGameServerInput(serverList[i].trim()));
   }
 
-  serverListDiv.innerHTML = serverListHtml;
+  let body = {
+    enable_features: botEnabled,
+    check_period: checkPeriod,
+    game_server_list: servers,
+  };
+
+  await postData(body);
+}
+
+async function postData(data) {
+  let headers = new Headers();
+  headers.set("Content-Type", "application/json");
+
+  let guildId = document.querySelector("meta[data-guild-id]").getAttribute("data-guild-id");
+  let url = "/v1/dashboard/" + guildId + "/settings";
+
+  await fetch(url, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(data),
+    headers: headers,
+  });
 }
