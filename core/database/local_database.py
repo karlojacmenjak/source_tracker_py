@@ -44,7 +44,7 @@ class DashboardDB(ezcord.DBHandler):
             server_name TEXT,
             address TEXT,
             port INTEGER,
-            last_data_feth TIMESTAMP,
+            last_data_fetch TIMESTAMP,
             last_response TEXT
             )"""
         )
@@ -103,14 +103,43 @@ class DashboardDB(ezcord.DBHandler):
             guild_id,
         )
 
-    async def update_settings(self, settings: DashboardSettings) -> None:
+    async def update_dashboard_settings(self, settings: DashboardSettings) -> None:
         validator = ControllerFactory.get_gameserver_controller()
-        await validator.filter_valid_servers(settings.game_server_list)
+        valid_servers = await validator.filter_valid_servers(settings.game_server_list)
 
         await self.exec(
             "UPDATE settings SET enable_features = ?, check_period = ? WHERE guild_id = ?",
             (settings.enable_features, settings.check_period, settings.guild_id),
             detect_types=1,
+        )
+
+        await self.executemany(
+            """
+            INSERT OR REPLACE INTO game_servers (server_name, address, port) 
+            SELECT ?, ?, ? WHERE NOT EXISTS (
+                SELECT * FROM game_servers WHERE address = ? AND port = ?
+                )
+            """,
+            [
+                (
+                    server.server_name,
+                    server.address,
+                    server.port,
+                    server.address,
+                    server.port,
+                )
+                for server in valid_servers
+            ],
+        )
+
+        await self.executemany(
+            """INSERT INTO settings_game_servers (guild_id, server_id) 
+            SELECT ?, server_id FROM game_servers WHERE address = ? AND port = ?
+            """,
+            [
+                (settings.guild_id, server.address, server.port)
+                for server in valid_servers
+            ],
         )
 
 

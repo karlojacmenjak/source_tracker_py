@@ -112,7 +112,9 @@ async def dashboard(
         check_period=check_period,
         bot_invited=bot_invited,
         invite_url=invite_url,
-        game_servers=[GameServer(ip="helloworld", port="12") for _ in range(5)],
+        game_servers=[
+            GameServer(ip="frk-1.de.uncletopia.com", port=27015) for _ in range(5)
+        ],
     )
 
     return page_controller.guild_dashboard(request=request, data=data)
@@ -138,7 +140,7 @@ async def change_settings(
 
     if settings:
         new_settings.guild_id = guild_id
-        await local_db.update_settings(new_settings)
+        await local_db.update_dashboard_settings(new_settings)
     else:
         new_settings.guild_id = guild_id
         await local_db.add_settings(new_settings)
