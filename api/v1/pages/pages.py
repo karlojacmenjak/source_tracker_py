@@ -93,7 +93,7 @@ async def dashboard(
     user = await discord_data.get_user(token=token)
     user_avatar = discord_data.get_user_avatar(user)
 
-    bot_not_invited = not bot.is_in_guild(guild_id=guild_id)
+    bot_invited = bot.is_in_guild(guild_id=guild_id)
     invite_url = HttpUrl(url=os.environ[DiscordAPI.bot_invite_link])
 
     setting = await local_db.get_setting(guild_id, "example_feature")
@@ -103,7 +103,7 @@ async def dashboard(
         username=user.global_name,
         is_enabled=True,
         check_period=5,
-        bot_not_invited=bot_not_invited,
+        bot_invited=bot_invited,
         invite_url=invite_url,
     )
 

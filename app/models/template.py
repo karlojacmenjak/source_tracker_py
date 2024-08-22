@@ -19,7 +19,7 @@ class GuildDisplayData(BaseModel):
 class DashboardMinimalDataModel(BaseModel):
     user_avatar: HttpUrl
     username: str
-    bot_not_invited: bool = False
+    bot_invited: bool = False
 
 
 class DashboardDataModel(DashboardMinimalDataModel):
