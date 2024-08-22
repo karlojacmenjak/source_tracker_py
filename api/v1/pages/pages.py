@@ -97,8 +97,6 @@ async def dashboard(
     bot_invited = bot.is_in_guild(guild_id=guild_id)
     invite_url = HttpUrl(url=os.environ[DiscordAPI.bot_invite_link])
 
-    setting = await local_db.get_setting(guild_id, "example_feature")
-
     data = GuildDashboardDataModel(
         user_avatar=user_avatar,
         username=user.global_name,

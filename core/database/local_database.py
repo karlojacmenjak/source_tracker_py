@@ -81,21 +81,5 @@ class DashboardDB(ezcord.DBHandler):
     async def delete_session(self, session_id):
         await self.exec("DELETE FROM sessions WHERE session_id = ?", session_id)
 
-    async def get_setting(
-        self, guild_id, feature
-    ) -> tuple[None, ...] | Any | tuple | None:
-        return await self.one(
-            f"SELECT {feature} FROM settings WHERE guild_id=?", guild_id
-        )
-
-    async def toggle_setting(self, guild_id, feature) -> None:
-        await self.exec(
-            "INSERT OR IGNORE INTO settings (guild_id) VALUES (?)", guild_id
-        )
-        await self.exec(
-            f"UPDATE settings SET {feature} = NOT {feature} WHERE guild_id = ?",
-            guild_id,
-        )
-
 
 local_db = DashboardDB()
