@@ -29,7 +29,7 @@ class SourceTrackerBot(Bot):
         is_in_guild = guild_id in self.get_guild_ids()
         return is_in_guild
 
-    async def check_perms(self, guild_id: int, user_id: int) -> bool:
+    def check_perms(self, guild_id: int, user_id: int) -> bool:
         guild = self.get_guild(guild_id)
         if not guild:
             return False
