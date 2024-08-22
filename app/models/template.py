@@ -1,5 +1,6 @@
 from pydantic import BaseModel, HttpUrl, field_validator
 
+from app.models.form import GameServer
 from core.constant import DashboardConstants
 
 
@@ -31,6 +32,7 @@ class GuildDashboardDataModel(DashboardMinimalDataModel):
     is_enabled: bool
     check_period: int = 5
     invite_url: HttpUrl | None = None
+    game_servers: list[GameServer]
 
     @field_validator("check_period")
     @classmethod

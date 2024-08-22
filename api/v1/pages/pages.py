@@ -10,7 +10,7 @@ from starlette.templating import _TemplateResponse
 
 from app.controllers import DiscordDataController, PageController
 from app.discord.bot import bot
-from app.models.form import DashboardSettings
+from app.models.form import DashboardSettings, GameServer
 from app.models.guild import PartialDiscordGuildModel
 from app.models.template import (
     DashboardDataModel,
@@ -105,6 +105,17 @@ async def dashboard(
         check_period=30,
         bot_invited=bot_invited,
         invite_url=invite_url,
+        game_servers=[
+            GameServer(ip="helloworld", port="12"),
+            GameServer(ip="helloworld", port="12"),
+            GameServer(ip="helloworld", port="12"),
+            GameServer(ip="helloworld", port="12"),
+            GameServer(ip="helloworld", port="12"),
+            GameServer(ip="helloworld", port="12"),
+            GameServer(ip="helloworld", port="12"),
+            GameServer(ip="helloworld", port="12"),
+            GameServer(ip="helloworld", port="12"),
+        ],
     )
 
     return page_controller.guild_dashboard(request=request, data=data)

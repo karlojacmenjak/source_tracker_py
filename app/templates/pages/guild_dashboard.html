@@ -93,15 +93,16 @@
             <p class="text-xl">Game servers list</p>
 
             <div id="serverList">
+
+              {% for server in game_servers %}
+
               <div class="list-item">
-                <input type="text" spellcheck="false" placeholder="ip:port" value="abc:10" />
+                <input type="text" spellcheck="false" placeholder="ip:port" value="{{server.ip}}:{{server.port}}" />
                 <button type="button" class="btn-icon"><img src="/static/icon-xmark.png" /></button>
               </div>
 
-              <div class="list-item">
-                <input type="text" spellcheck="false" placeholder="ip:port" value="abc:20" />
-                <button type="button" class="btn-icon"><img src="/static/icon-xmark.png" /></button>
-              </div>
+              {% endfor %}
+
             </div>
 
             <div class="list-item">
