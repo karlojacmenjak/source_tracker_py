@@ -5,6 +5,7 @@ from discord import Permissions
 from fastapi import APIRouter, Cookie, HTTPException, Request
 from fastapi.params import Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
+from pydantic import HttpUrl
 from starlette.templating import _TemplateResponse
 
 from app.controllers import DiscordDataController, PageController
@@ -92,6 +93,9 @@ async def dashboard(
     user = await discord_data.get_user(token=token)
     user_avatar = discord_data.get_user_avatar(user)
 
+    bot_not_invited = not bot.is_in_guild(guild_id=guild_id)
+    invite_url = HttpUrl(url=os.environ[DiscordAPI.bot_invite_link])
+
     setting = await local_db.get_setting(guild_id, "example_feature")
 
     data = GuildDashboardDataModel(
@@ -99,6 +103,8 @@ async def dashboard(
         username=user.global_name,
         is_enabled=True,
         check_period=5,
+        bot_not_invited=bot_not_invited,
+        invite_url=invite_url,
     )
 
     return page_controller.guild_dashboard(request=request, data=data)
@@ -148,7 +154,6 @@ def filter_guilds(
 
         if bot.is_in_guild(guild.id):
             bot_not_invited = True
-            invite_url = os.environ[DiscordAPI.bot_invite_link]
 
         is_admin = Permissions(guild.permissions).administrator
         if is_admin or guild.owner:
@@ -156,7 +161,6 @@ def filter_guilds(
             dashborad_guilds.append(
                 GuildDisplayData(
                     bot_not_invited=bot_not_invited,
-                    invite_url=invite_url,
                     **guild.model_dump(),
                 )
             )
