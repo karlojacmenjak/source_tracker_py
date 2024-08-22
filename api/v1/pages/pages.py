@@ -111,7 +111,7 @@ async def dashboard(
     return page_controller.guild_dashboard(request=request, data=data)
 
 
-@pages_router.get("/dashboard/{guild_id}/settings")
+@pages_router.post("/dashboard/{guild_id}/settings")
 async def change_settings(
     guild_id: int, settings: DashboardSettings, session_id: str = Cookie(None)
 ):

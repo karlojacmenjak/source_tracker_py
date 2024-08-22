@@ -23,7 +23,24 @@ class DashboardDB(ezcord.DBHandler):
         await self.exec(
             """CREATE TABLE IF NOT EXISTS settings (
             guild_id INTEGER PRIMARY KEY,
-            example_feature INTEGER DEFAULT 0
+            enable_features INTEGER DEFAULT 0,
+            check_period INTEGER DEFAULT 60
+            )"""
+        )
+
+        await self.exec(
+            """CREATE TABLE IF NOT EXISTS settings_game_servers (
+            guild_id INTEGER,
+            server_id INTEGER
+            )"""
+        )
+
+        await self.exec(
+            """CREATE TABLE IF NOT EXISTS game_servers (
+            server_id INTEGER INTEGER PRIMARY KEY,
+            server_name TEXT,
+            address TEXT,
+            port INTEGER
             )"""
         )
 
