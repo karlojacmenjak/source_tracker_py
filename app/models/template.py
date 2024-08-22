@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic import BaseModel, HttpUrl, field_validator
 
 from core.constant import DashboardConstants
 

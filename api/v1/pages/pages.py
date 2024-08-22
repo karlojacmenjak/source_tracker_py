@@ -114,7 +114,7 @@ async def dashboard(
 @pages_router.get("/dashboard/{guild_id}/settings")
 async def change_settings(
     guild_id: int, settings: DashboardSettings, session_id: str = Cookie(None)
-) -> RedirectResponse | JSONResponse:
+):
     user_id = await local_db.get_user_id(session_id)
 
     if not session_id or not user_id:
