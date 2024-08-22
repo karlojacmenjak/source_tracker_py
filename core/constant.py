@@ -11,6 +11,10 @@ class AppConstants:
     production = False
 
 
+class DashboardConstants:
+    min_check_period_min = 5
+
+
 class DiscordAPI:
     api_endpoint = "https://discord.com/api"
     icons_endpoint = "https://cdn.discordapp.com/icons"

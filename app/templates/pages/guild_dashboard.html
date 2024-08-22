@@ -51,9 +51,9 @@
         <div class="mt-4">
           <div>
             <p class="text-xl">Bot status</p>
-            <input type="radio" id="statusEnabled" name="bot_status" />
+            <input type="radio" id="statusEnabled" name="bot_status" {{ "checked" if is_enabled is sameas true  }}/>
             <label for="statusEnabled">Enabled</label>
-            <input type="radio" id="statusDisabled" name="bot_status" class="ml-4" />
+            <input type="radio" id="statusDisabled" name="bot_status" class="ml-4" {{ "checked" if is_enabled is sameas false }}/>
             <label for="statusDisabled">Disabled</label>
           </div>
 
