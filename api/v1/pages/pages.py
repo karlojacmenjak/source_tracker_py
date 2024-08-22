@@ -4,12 +4,13 @@ from datetime import datetime
 from discord import Permissions
 from fastapi import APIRouter, Cookie, HTTPException, Request
 from fastapi.params import Depends
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from pydantic import HttpUrl
 from starlette.templating import _TemplateResponse
 
 from app.controllers import DiscordDataController, PageController
 from app.discord.bot import bot
+from app.models.form import DashboardSettings
 from app.models.guild import PartialDiscordGuildModel
 from app.models.template import (
     DashboardDataModel,
@@ -110,20 +111,21 @@ async def dashboard(
     return page_controller.guild_dashboard(request=request, data=data)
 
 
-@pages_router.get("/dashboard/{guild_id}/settings/{feature}")
-async def change_settings(guild_id: int, feature: str, session_id: str = Cookie(None)):
+@pages_router.get("/dashboard/{guild_id}/settings")
+async def change_settings(
+    guild_id: int, settings: DashboardSettings, session_id: str = Cookie(None)
+) -> RedirectResponse | JSONResponse:
     user_id = await local_db.get_user_id(session_id)
 
     if not session_id or not user_id:
-        raise HTTPException(status_code=401, detail="no auth")
+        raise HTTPException(status_code=401, detail="No authorization")
 
     perms = bot.check_perms(guild_id=guild_id, user_id=user_id)
     if perms:
-        print("SQL INJECTION!!!! Popraviti!!!")
-        await local_db.toggle_setting(guild_id, feature)
+        print(settings)
         return RedirectResponse(url=f"/v1/dashboard/{guild_id}")
 
-    return {"error": "You do not have access to this guild"}
+    return JSONResponse(status_code=401, content="You do not have access to this guild")
 
 
 @pages_router.get("/404", response_class=HTMLResponse)
