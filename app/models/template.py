@@ -27,6 +27,7 @@ class DashboardDataModel(DashboardMinimalDataModel):
 
 
 class GuildDashboardDataModel(DashboardMinimalDataModel):
+    guild_id: int
     is_enabled: bool
     check_period: int = 5
     invite_url: HttpUrl | None = None

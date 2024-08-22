@@ -98,6 +98,7 @@ async def dashboard(
     invite_url = HttpUrl(url=os.environ[DiscordAPI.bot_invite_link])
 
     data = GuildDashboardDataModel(
+        guild_id=guild_id,
         user_avatar=user_avatar,
         username=user.global_name,
         is_enabled=True,
@@ -121,9 +122,10 @@ async def change_settings(
     perms = bot.check_perms(guild_id=guild_id, user_id=user_id)
     if perms:
         print(settings)
-        return RedirectResponse(url=f"/v1/dashboard/{guild_id}")
-
-    return JSONResponse(status_code=401, content="You do not have access to this guild")
+    else:
+        return JSONResponse(
+            status_code=401, content="You do not have access to this guild"
+        )
 
 
 @pages_router.get("/404", response_class=HTMLResponse)
