@@ -48,6 +48,19 @@
     <main class="p-16">
       <form>
         <h2 class="text-4xl">Guild dashboard</h2>
+        {% if bot_not_invited %}
+        <div role="alert" class="my-8">
+          <div class="bg-rose-500 text-white font-bold text-3xl rounded-t px-4 py-2">
+            Warning!
+          </div>
+          <div class="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-black">
+            <p>It appears Source Tracker is not part of this Discord Guild! Dashboard is enabled once you invite Source Tracker to your Guild!</p>
+          </div>
+        </div>
+        <button class="btn-primary mt-4" onclick="window.open('{{invite_url}}', '_blank');" type="button">
+          Invite Source Tracker
+        </button>
+        {% else %}
         <div class="mt-4">
           <div>
             <p class="text-xl">Bot status</p>
@@ -56,7 +69,6 @@
             <input type="radio" id="statusDisabled" name="bot_status" class="ml-4" {{ "checked" if is_enabled is sameas false }}/>
             <label for="statusDisabled">Disabled</label>
           </div>
-
           <div class="mt-4">
             <p class="text-xl">Check period</p>
 
@@ -72,6 +84,7 @@
           <div class="mt-4">
             <button type="submit" class="btn-primary">Save</button>
           </div>
+          {% endif %}
         </div>
       </form>
     </main>
