@@ -102,7 +102,7 @@ async def dashboard(
         user_avatar=user_avatar,
         username=user.global_name,
         is_enabled=True,
-        check_period=5,
+        check_period=30,
         bot_invited=bot_invited,
         invite_url=invite_url,
     )

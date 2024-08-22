@@ -60,7 +60,7 @@
     <main class="p-16">
       <form>
         <h2 class="text-4xl">Guild dashboard</h2>
-        {% if bot_not_invited %}
+        {% if not bot_invited %}
         <div role="alert" class="my-8">
           <div class="bg-rose-500 text-white font-bold text-3xl rounded-t px-4 py-2">
             Warning!
