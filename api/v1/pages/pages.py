@@ -1,12 +1,10 @@
 import os
 from datetime import datetime
 
-import ezcord
 from discord import Permissions
 from fastapi import APIRouter, Cookie, HTTPException, Request
 from fastapi.params import Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
-from pydantic import HttpUrl
 from starlette.templating import _TemplateResponse
 
 from app.controllers import DiscordDataController, PageController
@@ -118,19 +116,19 @@ async def change_settings(guild_id: int, feature: str, session_id: str = Cookie(
         print("SQL INJECTION!!!! Popraviti!!!")
         await local_db.toggle_setting(guild_id, feature)
         return RedirectResponse(url=f"/v1/dashboard/{guild_id}")
-    else:
-        return {"error": "You do not have access to this guild"}
+
+    return {"error": "You do not have access to this guild"}
 
 
 @pages_router.get("/404", response_class=HTMLResponse)
 def not_found(
     request: Request,
     page_controller: PageController = Depends(ControllerFactory.get_page_controller),
-):
+) -> _TemplateResponse:
     return page_controller.page_404(request=request)
 
 
-async def check_session(session_id, refresh_token):
+async def check_session(session_id, refresh_token) -> None:
     api = ControllerFactory.get_auth_controller()
     await api.setup()
 
@@ -148,7 +146,7 @@ def filter_guilds(
     for guild in list(user_guilds):
         bot_not_invited = False
 
-        if not int(guild.id) in bot_guild_ids:
+        if bot.is_in_guild(guild.id):
             bot_not_invited = True
             invite_url = os.environ[DiscordAPI.bot_invite_link]
 

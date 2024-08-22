@@ -25,6 +25,9 @@ class SourceTrackerBot(Bot):
     def get_guild_ids(self) -> list[int]:
         return [guild.id for guild in self.guilds]
 
+    def is_in_guild(self, guild_id: int) -> bool:
+        return guild_id in self.guilds
+
     async def check_perms(self, guild_id: int, user_id: int) -> bool:
         guild = self.get_guild(guild_id)
         if not guild:
