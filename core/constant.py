@@ -12,7 +12,9 @@ class AppConstants:
 
 
 class DashboardConstants:
-    min_check_period_min = 5
+    check_period_step = 5
+    check_period_min = 5
+    check_period_max = 60
 
 
 class DiscordAPI:

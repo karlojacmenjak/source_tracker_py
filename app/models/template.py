@@ -12,8 +12,6 @@ class GuildDisplayData(BaseModel):
     name: str
     guild_image_url: HttpUrl
     guild_dashboard_url: str
-    bot_not_invited: bool = False
-    invite_url: HttpUrl | None = None
     approximate_member_count: int | None = None
     approximate_presence_count: int | None = None
 
@@ -21,6 +19,7 @@ class GuildDisplayData(BaseModel):
 class DashboardMinimalDataModel(BaseModel):
     user_avatar: HttpUrl
     username: str
+    bot_not_invited: bool = False
 
 
 class DashboardDataModel(DashboardMinimalDataModel):
@@ -29,10 +28,15 @@ class DashboardDataModel(DashboardMinimalDataModel):
 
 class GuildDashboardDataModel(DashboardMinimalDataModel):
     is_enabled: bool
-    check_period: int = Field(gt=5, lt=60)
+    check_period: int = 5
+    invite_url: HttpUrl | None = None
 
-    @field_validator()
+    @field_validator("check_period")
     @classmethod
     def snap_period(cls, raw: int) -> int:
-        base = DashboardConstants.min_check_period_min
-        return base * round(raw / base)
+        min_value = DashboardConstants.check_period_min
+        max_value = DashboardConstants.check_period_max
+        base = DashboardConstants.check_period_step
+
+        value = base * round(raw / base)
+        return max(min(value, max_value), min_value)
