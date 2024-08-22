@@ -2,7 +2,11 @@ from fastapi.requests import Request
 from fastapi.templating import Jinja2Templates
 from starlette.templating import _TemplateResponse
 
-from app.models.template import DashboardDataModel, MainDataModel
+from app.models.template import (
+    DashboardDataModel,
+    GuildDashboardDataModel,
+    MainDataModel,
+)
 
 
 class PageController:
@@ -28,11 +32,13 @@ class PageController:
             context=data.model_dump(),
         )
 
-    def guild_dashboard(self, request: Request, data: dict) -> _TemplateResponse:
+    def guild_dashboard(
+        self, request: Request, data: GuildDashboardDataModel
+    ) -> _TemplateResponse:
         return self.templates.TemplateResponse(
             request=request,
             name="pages/guild_dashboard.html",
-            context=data,
+            context=data.model_dump(),
         )
 
     def page_404(self, request: Request) -> _TemplateResponse:

@@ -1,4 +1,6 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, field_validator
+
+from core.constant import DashboardConstants
 
 
 class MainDataModel(BaseModel):
@@ -6,7 +8,7 @@ class MainDataModel(BaseModel):
     login_url: str
 
 
-class DashboardGuildData(BaseModel):
+class GuildDisplayData(BaseModel):
     name: str
     guild_image_url: HttpUrl
     guild_dashboard_url: str
@@ -16,7 +18,21 @@ class DashboardGuildData(BaseModel):
     approximate_presence_count: int | None = None
 
 
-class DashboardDataModel(BaseModel):
+class DashboardMinimalDataModel(BaseModel):
     user_avatar: HttpUrl
     username: str
-    guilds: list[DashboardGuildData]
+
+
+class DashboardDataModel(DashboardMinimalDataModel):
+    guilds: list[GuildDisplayData]
+
+
+class GuildDashboardDataModel(DashboardMinimalDataModel):
+    is_enabled: bool
+    check_period: int = Field(gt=5, lt=60)
+
+    @field_validator()
+    @classmethod
+    def snap_period(cls, raw: int) -> int:
+        base = DashboardConstants.min_check_period_min
+        return base * round(raw / base)

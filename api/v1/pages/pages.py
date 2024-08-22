@@ -11,7 +11,13 @@ from starlette.templating import _TemplateResponse
 
 from app.controllers import DiscordDataController, PageController
 from app.discord.bot import bot
-from app.models.template import DashboardDataModel, DashboardGuildData, MainDataModel
+from app.models.guild import PartialDiscordGuildModel
+from app.models.template import (
+    DashboardDataModel,
+    GuildDashboardDataModel,
+    GuildDisplayData,
+    MainDataModel,
+)
 from core.constant import DiscordAPI
 from core.database.local_database import local_db
 from core.factory.controller_factory import ControllerFactory
@@ -90,15 +96,14 @@ async def dashboard(
 
     setting = await local_db.get_setting(guild_id, "example_feature")
 
-    return page_controller.guild_dashboard(
-        request,
-        {
-            "user_avatar": user_avatar,
-            "username": user.global_name,
-            "id": guild_id,
-            "feature": setting,
-        },
+    data = GuildDashboardDataModel(
+        user_avatar=user_avatar,
+        username=user.global_name,
+        is_enabled=True,
+        check_period=5,
     )
+
+    return page_controller.guild_dashboard(request=request, data=data)
 
 
 @pages_router.get("/dashboard/{guild_id}/settings/{feature}")
@@ -135,9 +140,10 @@ async def check_session(session_id, refresh_token):
         RedirectResponse(url="/logout")
 
 
-def filter_guilds(user_guilds) -> list[DashboardGuildData]:
-    bot_guild_ids = bot.get_guild_ids()
-    dashborad_guilds: list[DashboardGuildData] = []
+def filter_guilds(
+    user_guilds: list[PartialDiscordGuildModel],
+) -> list[GuildDisplayData]:
+    dashborad_guilds: list[GuildDisplayData] = []
 
     for guild in list(user_guilds):
         bot_not_invited = False
@@ -150,7 +156,7 @@ def filter_guilds(user_guilds) -> list[DashboardGuildData]:
         if is_admin or guild.owner:
 
             dashborad_guilds.append(
-                DashboardGuildData(
+                GuildDisplayData(
                     bot_not_invited=bot_not_invited,
                     invite_url=invite_url,
                     **guild.model_dump(),
