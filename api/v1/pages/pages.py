@@ -101,8 +101,6 @@ async def dashboard(
     if settings:
         _, enable_features, check_period = settings
 
-    print(check_period, enable_features)
-
     bot_invited = bot.is_in_guild(guild_id=guild_id)
     invite_url = HttpUrl(url=os.environ[DiscordAPI.bot_invite_link])
 
@@ -137,12 +135,7 @@ async def change_settings(
         )
 
     settings = await local_db.exists_settings(guild_id=guild_id)
-    print(
-        "new_settings",
-        new_settings.check_period,
-        new_settings.enable_features,
-        new_settings.guild_id,
-    )
+
     if settings:
         new_settings.guild_id = guild_id
         await local_db.update_settings(new_settings)

@@ -5,6 +5,7 @@ from typing import Any
 import ezcord
 
 from app.models.form import DashboardSettings
+from core.factory.controller_factory import ControllerFactory
 
 
 class DashboardDB(ezcord.DBHandler):
@@ -103,12 +104,9 @@ class DashboardDB(ezcord.DBHandler):
         )
 
     async def update_settings(self, settings: DashboardSettings) -> None:
-        print(
-            "update_settings",
-            settings.check_period,
-            settings.enable_features,
-            settings.guild_id,
-        )
+        validator = ControllerFactory.get_gameserver_controller()
+        await validator.filter_valid_servers(settings.game_server_list)
+
         await self.exec(
             "UPDATE settings SET enable_features = ?, check_period = ? WHERE guild_id = ?",
             (settings.enable_features, settings.check_period, settings.guild_id),

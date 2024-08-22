@@ -1,6 +1,11 @@
 import os
 
-from app.controllers import AuthController, DiscordDataController, PageController
+from app.controllers import (
+    AuthController,
+    DiscordDataController,
+    GameServerController,
+    PageController,
+)
 from core.constant import DiscordAPI
 
 
@@ -21,3 +26,7 @@ class ControllerFactory:
     @staticmethod
     def get_discord_data_controller() -> DiscordDataController:
         return DiscordDataController()
+
+    @staticmethod
+    def get_gameserver_controller() -> GameServerController:
+        return GameServerController()
