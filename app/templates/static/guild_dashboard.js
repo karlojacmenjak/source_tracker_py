@@ -1,7 +1,17 @@
+let rbStatusEnabled;
+let rbStatusDisabled;
+
 let checkPeriodRange;
 let checkPeriodLabel;
+
 let serverListDiv;
 let serverList;
+
+let txtServerData;
+let btnAddServer;
+let divMoreSettings;
+
+let btnSave;
 
 document.addEventListener("DOMContentLoaded", () => init());
 
@@ -21,8 +31,8 @@ function init() {
     serverList.push(item.querySelector("input").value);
   }
 
-  let txtServerData = document.getElementById("txtServerData");
-  let btnAddServer = document.getElementById("btnAddServer");
+  txtServerData = document.getElementById("txtServerData");
+  btnAddServer = document.getElementById("btnAddServer");
 
   btnAddServer.addEventListener("click", () => {
     let server = txtServerData.value.trim();
@@ -37,14 +47,16 @@ function init() {
     }
   });
 
-  let btnSave = document.getElementById("btnSave");
-  btnSave.addEventListener("click", async () => {
-    try {
-      await saveData();
-    } catch (error) {
-      alert(error.message);
-    }
-  });
+  btnSave = document.getElementById("btnSave");
+  btnSave.addEventListener("click", () => onBtnSave());
+
+  rbStatusEnabled = document.getElementById("statusEnabled");
+  rbStatusDisabled = document.getElementById("statusDisabled");
+
+  rbStatusEnabled.addEventListener("input", () => refreshForm());
+  rbStatusDisabled.addEventListener("input", () => refreshForm());
+
+  divMoreSettings = document.getElementById("moreSettings");
 
   refreshForm();
 }
@@ -63,7 +75,7 @@ function parseGameServerInput(data) {
   data = data.trim();
 
   let regFull = /([a-zA-Z0-9\-\_\.]+)\s*:\s*(\d+)/gm;
-  if(!regFull.test(data)) {
+  if (!regFull.test(data)) {
     throw new Error("Invalid format for game server. Expected format is address:PORT. Actual value: " + data);
   }
   let result = data.split(":");
@@ -82,6 +94,14 @@ function parseGameServerInput(data) {
 }
 
 function refreshForm() {
+  let disabled = rbStatusDisabled.checked;
+
+  if (disabled) {
+    divMoreSettings.style.display = "none";
+  } else {
+    divMoreSettings.style.display = "block";
+  }
+
   checkPeriodLabel.innerText = checkPeriodRange.value + " min";
 
   serverListDiv.innerHTML = "";
@@ -112,9 +132,21 @@ function refreshForm() {
   }
 }
 
-async function saveData() {
-  let rbStatusEnabled = document.getElementById("statusEnabled");
+async function onBtnSave() {
+  try {
+    btnSave.disabled = true;
+    btnSave.innerText = "Saving";
+    await saveData();
+    location.reload();
+  } catch (error) {
+    alert(error.message);
+  }
 
+  btnSave.innerText = "Save";
+  btnSave.disabled = false;
+}
+
+async function saveData() {
   let botEnabled = rbStatusEnabled.checked;
   let checkPeriod = checkPeriodRange.value;
   let servers = [];
