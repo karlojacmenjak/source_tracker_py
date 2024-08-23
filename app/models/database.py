@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class ValidGameServers(BaseModel):
+class ValidGameServer(BaseModel):
     address: str = None
     app_id: int = None
     bot_count: int = None

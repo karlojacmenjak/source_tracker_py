@@ -1,9 +1,14 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
 class GameServer(BaseModel, frozen=True):
     address: str
     port: int
+    server_name: str | None = None
+    last_data_fetch: datetime | None = None
+    last_response: str | None = None
 
 
 class DashboardSettings(BaseModel):

@@ -107,9 +107,12 @@ class DashboardDB(ezcord.DBHandler):
             guild_id,
         )
 
-    async def get_game_servers(self, guild_id: int):
+    async def update_game_server_last_check(self):
+        return await self.exec()
+
+    async def get_game_servers(self, guild_id: int) -> list[GameServer]:
         results = await self.all(
-            """SELECT server_name, address, port FROM game_servers gs
+            """SELECT address, port, server_name, last_data_fetch, last_response FROM game_servers gs
             LEFT JOIN settings_game_servers sgs ON 
             gs.server_id = sgs.server_id WHERE
             sgs.guild_id = ?
@@ -117,7 +120,10 @@ class DashboardDB(ezcord.DBHandler):
             (guild_id),
         )
 
-        return [GameServer(address=r[1], port=r[2]) for r in results]
+        return [
+            GameServer(**{k: v for k, v in zip(GameServer.model_fields.keys(), r)})
+            for r in results
+        ]
 
     async def update_dashboard_settings(self, settings: DashboardSettings) -> None:
         validator = ControllerFactory.get_gameserver_controller()
