@@ -52,8 +52,11 @@ class CogGeneral(commands.Cog):
 
     @commands.command(usage="/help", description="My description to display")
     async def help(self, ctx: discord.ApplicationContext) -> None:
-        await ctx.send("A")
-        # await ctx.respond("", embed=HelpEmbed(self.bot))
+        commands = ""
+        for c in self.bot.commands:
+            print(c.name, c)
+            commands += c.name + "\n"
+        await ctx.respond(commands)
 
     @commands.command()
     async def test(self, ctx: discord.ApplicationContext):
