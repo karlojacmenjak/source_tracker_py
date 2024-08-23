@@ -11,6 +11,11 @@ class AppConstants:
     production = True
 
 
+class BotConstants:
+    name = "Source Tracker"
+    color = 0xBE123C
+
+
 class DashboardConstants:
     check_period_step = 5
     check_period_min = 5
