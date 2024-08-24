@@ -40,7 +40,6 @@ async def callback(
     user = await discord_data.get_user(token)
     user_id = user.id
 
-    # TODO Store session in dp
     session_id = await local_db.add_session(token, refresh_token, expires_in, user_id)
 
     response = RedirectResponse(url="/v1/dashboard")
