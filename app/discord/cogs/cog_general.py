@@ -3,6 +3,7 @@ from discord.ext import commands
 
 from app.discord.cogs.helpers.buttons import ActionButton
 from app.discord.cogs.helpers.embeds import HelpEmbed, OnJoinEmbed, RequestEmbed
+from app.discord.cogs.helpers.views import RequestView
 from app.models.form import GameServer
 from core.factory.controller_factory import ControllerFactory
 
@@ -49,13 +50,7 @@ class CogGeneral(commands.Cog):
         server = GameServer(address=address, port=port)
         valid_server = await controller.filter_valid_servers([server])
 
-        view = discord.ui.View(timeout=None)
-
-        # for role_id in self.bot.users:
-        #     # Get the role from the guild by ID.
-        #     role = ctx.guild.get_role(role_id)
-        view.add_item(ActionButton(label="Accept", style=discord.ButtonStyle.green))
-        view.add_item(ActionButton(label="Deny", style=discord.ButtonStyle.red))
+        view = RequestView()
 
         if len(valid_server) > 0:
             await ctx.send_followup(
