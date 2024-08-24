@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from discord import Bot, Embed, EmbedField
+from discord import Bot, Embed, EmbedField, Guild
 from discord.ext import commands, tasks
 
 from app.models.database import ValidGameServer
@@ -11,8 +11,10 @@ from core.factory.controller_factory import ControllerFactory
 
 
 class ServerInfoEmbed(Embed):
-    def __init__(self, bot: Bot, game_servers: list[ValidGameServer]) -> None:
-        title = "GUILDNAME's list of Source Engine Game Info's"
+    def __init__(
+        self, bot: Bot, guild: Guild, game_servers: list[ValidGameServer]
+    ) -> None:
+        title = f"{guild.name}'s list of Source Engine Game Info's"
 
         fields: list[EmbedField] = []
         for i, s in enumerate(game_servers):
@@ -74,7 +76,9 @@ class CogGameServer(commands.Cog):
                 else:
                     print("Do something with last_response")
 
-            await stats_channel.send(embed=ServerInfoEmbed(self.bot, game_servers_info))
+            await stats_channel.send(
+                embed=ServerInfoEmbed(self.bot, guild, game_servers_info)
+            )
 
     async def append_info(
         self, game_servers_info: list[ValidGameServer], server: GameServer
