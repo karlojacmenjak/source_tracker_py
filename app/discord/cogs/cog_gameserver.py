@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from discord import Bot, Embed, EmbedField, Guild
-from discord.ext import commands, pages, tasks
+from discord.ext import commands, tasks
 
 from app.models.database import ValidGameServer
 from app.models.form import GameServer
@@ -19,7 +19,7 @@ class ServerInfoEmbed(Embed):
         game_servers = sorted(game_servers, key=lambda g: g.player_count, reverse=True)
 
         fields: list[EmbedField] = []
-        for i, s in enumerate(game_servers):
+        for s in game_servers:
             fields.append(
                 EmbedField(
                     name=s.server_name,
@@ -72,31 +72,40 @@ class CogGameServer(commands.Cog):
 
                 if self.info_check_required(check_period, server.last_data_fetch):
                     try:
-                        await self.append_info(game_servers_info, server)
+                        valid_server = await self.refresh_info(
+                            game_servers_info, server
+                        )
+                        await local_db.update_game_server_last_fetch(
+                            server, valid_server
+                        )
                     except Exception as e:
                         print(e)
                 else:
-                    print("Do something with last_response")
+                    game_servers.append(
+                        ValidGameServer.model_validate_json(server.last_response)
+                    )
 
-            await stats_channel.send(
-                embed=ServerInfoEmbed(self.bot, guild, game_servers_info)
-            )
+            if len(game_servers_info) > 0:
+                await stats_channel.send(
+                    embed=(ServerInfoEmbed(self.bot, guild, game_servers_info))
+                )
 
-    async def append_info(
+    async def refresh_info(
         self, game_servers_info: list[ValidGameServer], server: GameServer
-    ) -> None:
+    ) -> ValidGameServer:
         info = await self.controller.get_server_info(server)
         game_servers_info.append(info)
+        return info
 
-    def info_check_required(self, check_period, last_data_fetch) -> bool:
+    def info_check_required(self, check_period, last_data_fetch: datetime) -> bool:
         if not last_data_fetch:
             return True
-        expected_datetime: datetime = last_data_fetch + timedelta(minutes=check_period)
-        check_period_passed: bool = expected_datetime < datetime.now()
+        expected_datetime = last_data_fetch + timedelta(minutes=check_period)
+        check_period_passed = expected_datetime < datetime.now()
         return check_period_passed
 
     @fetch_server_info.before_loop
-    async def before_printer(self) -> None:
+    async def before_fetch_server_info(self) -> None:
         await self.bot.wait_until_ready()
 
 

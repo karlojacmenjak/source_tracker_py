@@ -4,6 +4,7 @@ from typing import Any
 
 import ezcord
 
+from app.models.database import ValidGameServer
 from app.models.form import DashboardSettings, GameServer
 from core.factory.controller_factory import ControllerFactory
 
@@ -107,8 +108,18 @@ class DashboardDB(ezcord.DBHandler):
             guild_id,
         )
 
-    async def update_game_server_last_check(self):
-        return await self.exec()
+    async def update_game_server_last_fetch(
+        self, server: GameServer, valid_server: ValidGameServer
+    ) -> None:
+        await self.exec(
+            "UPDATE game_servers SET last_data_fetch = ?, last_response = ? WHERE address = ? AND port = ?",
+            (
+                datetime.now(),
+                valid_server.model_dump_json(),
+                server.address,
+                server.port,
+            ),
+        )
 
     async def get_game_servers(self, guild_id: int) -> list[GameServer]:
         results = await self.all(
