@@ -72,9 +72,9 @@ class CogGameServer(commands.Cog):
 
                 if self.info_check_required(check_period, server.last_data_fetch):
                     try:
-                        valid_server = await self.refresh_info(
-                            game_servers_info, server
-                        )
+                        valid_server = await self.refresh_info(server)
+                        game_servers.append(valid_server)
+
                         await local_db.update_game_server_last_fetch(
                             server, valid_server
                         )
@@ -90,12 +90,8 @@ class CogGameServer(commands.Cog):
                     embed=(ServerInfoEmbed(self.bot, guild, game_servers_info))
                 )
 
-    async def refresh_info(
-        self, game_servers_info: list[ValidGameServer], server: GameServer
-    ) -> ValidGameServer:
-        info = await self.controller.get_server_info(server)
-        game_servers_info.append(info)
-        return info
+    async def refresh_info(self, server: GameServer) -> ValidGameServer:
+        return await self.controller.get_server_info(server)
 
     def info_check_required(self, check_period, last_data_fetch: datetime) -> bool:
         if not last_data_fetch:
