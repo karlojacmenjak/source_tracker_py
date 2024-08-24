@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from discord import Bot, Embed, EmbedField, Guild
-from discord.ext import commands, tasks
+from discord.ext import commands, pages, tasks
 
 from app.models.database import ValidGameServer
 from app.models.form import GameServer
@@ -15,6 +15,8 @@ class ServerInfoEmbed(Embed):
         self, bot: Bot, guild: Guild, game_servers: list[ValidGameServer]
     ) -> None:
         title = f"{guild.name}'s list of Source Engine Game Info's"
+
+        game_servers = sorted(game_servers, key=lambda g: g.player_count, reverse=True)
 
         fields: list[EmbedField] = []
         for i, s in enumerate(game_servers):

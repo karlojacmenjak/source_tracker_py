@@ -29,15 +29,18 @@ class HelpEmbed(discord.Embed):
         title = f"{BotConstants.name} Help"
         description = "Here's the list of all available slash commands:"
 
+        embed_fields: list[discord.EmbedField] = []
+
         for c in bot.walk_application_commands():
-            print(c.name, c)
+            embed_fields.append(discord.EmbedField(name=c.name, value=c.description))
 
         super().__init__(
             title=title,
             description=description,
             color=BotConstants.color,
             timestamp=datetime.now(),
-            image=bot.user.avatar.url,
+            thumbnail=bot.user.avatar.url,
+            fields=embed_fields,
         )
 
 
@@ -50,17 +53,18 @@ class CogGeneral(commands.Cog):
         if guild.system_channel:
             await guild.system_channel.send("", embed=OnJoinEmbed(self.bot))
 
-    @commands.command(usage="/help", description="My description to display")
+    @commands.slash_command(
+        usage="/help", description="Displays all available commands\n Usage: `/help`"
+    )
     async def help(self, ctx: discord.ApplicationContext) -> None:
-        commands = ""
-        for c in self.bot.commands:
-            print(c.name, c)
-            commands += c.name + "\n"
-        await ctx.respond(commands)
+        await ctx.respond(embed=HelpEmbed(self.bot))
 
-    @commands.command()
+    @commands.slash_command(
+        usage="/test",
+        description="Tests if bot is alive or dead, like a that one guys cat!\nUsage: /test",
+    )
     async def test(self, ctx: discord.ApplicationContext):
-        await ctx.send("`Test completed succesfully`")
+        await ctx.respond("`Test completed succesfully` ||Also I am not a cat||")
 
 
 def setup(bot: commands.Bot) -> None:
