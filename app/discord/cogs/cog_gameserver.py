@@ -1,43 +1,14 @@
 from datetime import datetime, timedelta
 
-from discord import Bot, Embed, EmbedField, Guild
+import discord
 from discord.ext import commands, tasks
 
+from app.discord.cogs.embeds.embeds import ServerInfoEmbed
 from app.models.database import ValidGameServer
 from app.models.form import GameServer
-from core.constant import BotConstants, DashboardConstants
+from core.constant import DashboardConstants
 from core.database.local_database import local_db
 from core.factory.controller_factory import ControllerFactory
-
-
-class ServerInfoEmbed(Embed):
-    def __init__(
-        self, bot: Bot, guild: Guild, game_servers: list[ValidGameServer]
-    ) -> None:
-        title = f"{guild.name}'s list of Source Engine Game Info's"
-
-        game_servers = sorted(game_servers, key=lambda g: g.player_count, reverse=True)
-
-        fields: list[EmbedField] = []
-        for s in game_servers:
-            fields.append(
-                EmbedField(
-                    name=s.server_name,
-                    value=f"""***Game***: {s.game}\n
-                        ***Player count***: {s.player_count}/{s.max_players}\n
-                        Join server using the following command:\n```connect {s.address}:{s.port}```\n\n
-                        \u200b""",
-                    inline=False,
-                )
-            )
-
-        super().__init__(
-            title=title,
-            color=BotConstants.color,
-            timestamp=datetime.now(),
-            thumbnail=bot.user.avatar.url,
-            fields=fields,
-        )
 
 
 class CogGameServer(commands.Cog):
@@ -90,6 +61,17 @@ class CogGameServer(commands.Cog):
                     embed=(ServerInfoEmbed(self.bot, guild, game_servers_info))
                 )
 
+    @fetch_server_info.before_loop
+    async def before_fetch_server_info(self) -> None:
+        await self.bot.wait_until_ready()
+
+    @commands.slash_command(
+        usage="/peek <servername>",
+        description="Peeks into server, showing players in it\n`/peek <servername>`",
+    )
+    async def peek(self, ctx: discord.ApplicationContext):
+        await ctx.respond()
+
     async def refresh_info(self, server: GameServer) -> ValidGameServer:
         return await self.controller.get_server_info(server)
 
@@ -99,10 +81,6 @@ class CogGameServer(commands.Cog):
         expected_datetime = last_data_fetch + timedelta(minutes=check_period)
         check_period_passed = expected_datetime < datetime.now()
         return check_period_passed
-
-    @fetch_server_info.before_loop
-    async def before_fetch_server_info(self) -> None:
-        await self.bot.wait_until_ready()
 
 
 def setup(bot: commands.Bot) -> None:

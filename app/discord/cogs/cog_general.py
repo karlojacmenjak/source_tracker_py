@@ -1,47 +1,7 @@
-from datetime import datetime
-
 import discord
 from discord.ext import commands
 
-from core.constant import AppConstants, BotConstants
-
-
-class OnJoinEmbed(discord.Embed):
-    def __init__(self, bot: commands.Bot) -> None:
-
-        description = f"""Thank you for adding Source Tracker to your guild! \n\n
-        To start using this bot, use `/help` to display available Source Trackers Slash Commands!\n\n
-        Please go to <http:/{AppConstants.host}:{AppConstants.port}/> to customize Source Tracker's features."""
-
-        super().__init__(
-            title=BotConstants.name,
-            description=description,
-            color=BotConstants.color,
-            timestamp=datetime.now(),
-            author=discord.EmbedAuthor(
-                name="Source Tracker", icon_url=bot.user.avatar.url
-            ),
-        )
-
-
-class HelpEmbed(discord.Embed):
-    def __init__(self, bot: commands.Bot) -> None:
-        title = f"{BotConstants.name} Help"
-        description = "Here's the list of all available slash commands:"
-
-        embed_fields: list[discord.EmbedField] = []
-
-        for c in bot.walk_application_commands():
-            embed_fields.append(discord.EmbedField(name=c.name, value=c.description))
-
-        super().__init__(
-            title=title,
-            description=description,
-            color=BotConstants.color,
-            timestamp=datetime.now(),
-            thumbnail=bot.user.avatar.url,
-            fields=embed_fields,
-        )
+from app.discord.cogs.embeds.embeds import HelpEmbed, OnJoinEmbed
 
 
 class CogGeneral(commands.Cog):
