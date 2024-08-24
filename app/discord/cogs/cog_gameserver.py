@@ -42,8 +42,11 @@ class CogGameServer(commands.Cog):
     async def fetch_server_info(self) -> None:
         for guild in self.bot.guilds:
             stats_channel = (
-                guild.system_channel if guild.system_channel else guild.channels[0]
+                guild.system_channel
+                if guild.system_channel
+                else self.can_send_channel(guild)
             )
+
             game_servers_info: list[ValidGameServer] = []
 
             bot_settings = await local_db.get_bot_settings(guild_id=guild.id)
@@ -79,6 +82,9 @@ class CogGameServer(commands.Cog):
                 await stats_channel.send(
                     embed=(ServerInfoEmbed(self.bot, guild, game_servers_info))
                 )
+
+    def can_send_channel(self, guild):
+        return next([channel for channel in guild.channels if channel.can_send()])
 
     @fetch_server_info.before_loop
     async def before_fetch_server_info(self) -> None:
