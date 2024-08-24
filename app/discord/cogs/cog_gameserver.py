@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta
 
 import discord
+import humanize
 from discord.ext import commands, tasks
+from tablib import Dataset
 
 from app.discord.cogs.embeds.embeds import ServerInfoEmbed
 from app.models.database import ValidGameServer
@@ -44,7 +46,7 @@ class CogGameServer(commands.Cog):
                 if self.info_check_required(check_period, server.last_data_fetch):
                     try:
                         valid_server = await self.refresh_info(server)
-                        game_servers.append(valid_server)
+                        game_servers_info.append(valid_server)
 
                         await local_db.update_game_server_last_fetch(
                             server, valid_server
@@ -52,8 +54,10 @@ class CogGameServer(commands.Cog):
                     except Exception as e:
                         print(e)
                 else:
-                    game_servers.append(
-                        ValidGameServer.model_validate_json(server.last_response)
+                    game_servers_info.append(
+                        ValidGameServer.model_validate_json(
+                            server.last_response, strict=False
+                        )
                     )
 
             if len(game_servers_info) > 0:
@@ -65,17 +69,31 @@ class CogGameServer(commands.Cog):
     async def before_fetch_server_info(self) -> None:
         await self.bot.wait_until_ready()
 
+    @commands.guild_only()
     @commands.slash_command(
         usage="/peek <servername>",
         description="Peeks into server, showing players in it\n`/peek <servername>`",
     )
-    async def peek(self, ctx: discord.ApplicationContext):
-        await ctx.respond()
+    async def peek(self, ctx: discord.ApplicationContext) -> None:
+        game_servers = await local_db.get_game_servers(guild_id=ctx.guild_id())
+
+        players = await self.controller.get_server_players(game_servers[0])
+        players = sorted(players, key=lambda p: p.score, reverse=True)
+
+        data = Dataset(headers=["Username", "Score", "Time playing"])
+
+        for p in players:
+            data.append([p.name, p.score, humanize.naturaldelta(p.duration)])
+        message = f"```" + data.export("cli", tablefmt="github") + "```"
+
+        await ctx.respond(message)
 
     async def refresh_info(self, server: GameServer) -> ValidGameServer:
         return await self.controller.get_server_info(server)
 
-    def info_check_required(self, check_period, last_data_fetch: datetime) -> bool:
+    def info_check_required(
+        self, check_period, last_data_fetch: datetime | None
+    ) -> bool:
         if not last_data_fetch:
             return True
         expected_datetime = last_data_fetch + timedelta(minutes=check_period)

@@ -25,13 +25,26 @@ class GameServerController:
         return valid_game_servers
 
     async def get_server_info(self, server: GameServer) -> ValidGameServer:
-        hostname = (server.address, server.port)
+        hostname = self.to_hostname(server)
         fetched_info: SourceInfo | GoldSrcInfo = await a2s.ainfo(hostname)
 
         valid_server = ValidGameServer(**self.to_dict(fetched_info))
         valid_server.address = server.address
         valid_server.port = server.port
         return valid_server
+
+    async def get_server_players(self, server: GameServer) -> list[a2s.Player]:
+        hostname = self.to_hostname(server)
+        fetched_players: list[a2s.Player] = []
+
+        response = await a2s.aplayers(hostname)
+        fetched_players.extend(response)
+
+        return fetched_players
+
+    def to_hostname(self, server) -> tuple:
+        hostname = (server.address, server.port)
+        return hostname
 
     def to_dict(self, instance: SourceInfo | GoldSrcInfo) -> dict:
         result = {}
