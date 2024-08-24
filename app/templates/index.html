@@ -11,23 +11,59 @@
         @apply py-2 px-5 bg-rose-700 text-white rounded-full
         hover:bg-rose-800 focus:outline-none focus:ring focus:ring-yellow-400;
       }
+      .panel {
+        @apply bg-neutral-900 rounded-2xl p-6 m-4 shadow-lg min-h-[300px] flex flex-col justify-start;
+      }
     </style>
   </head>
 
-  <body class="bg-neutral-950 text-slate-200">
+  <body class="bg-neutral-950 text-slate-200 overflow-hidden">
     <header class="bg-rose-700 p-4">
       <h1 class="text-2xl">Source Tracker Demo</h1>
     </header>
 
     <main class="h-[80vh]">
-      <div class="flex items-center justify-center h-full">
-        <div class="bg-neutral-900 rounded-2xl p-4">
-          <h2 class="text-xl">Hello world!</h2>
+      <div class="flex flex-wrap items-center justify-center h-full">
+
+        <!-- Login Box -->
+        <div class="panel w-full sm:w-full md:w-1/4 flex flex-col items-center justify-center">
+          <h2 class="text-xl mb-4">Welcome to Source Tracker!</h2>
+          <p class="mb-auto">Serving {{guild_count}} Discord guilds around the world!</p>
           <a href="{{login_url}}">
-            <button class="btn-primary mt-4">Discord login</button>
+            <button class="btn-primary">Discord Login</button>
           </a>
-          <p class="mt-4">We are serving {{guild_count}} Discord Guilds!</p>
         </div>
+
+        <!-- Panel 1: About the Bot -->
+        <div class="panel w-full sm:w-full md:w-1/4">
+          <h2 class="text-xl mb-4">About Source Tracker</h2>
+          <p>Source Tracker is a Discord bot that gathers real-time information from various Source Engine game servers using the Source Query (A2S) protocol. Whether it's player stats, server status, or game events, Source Tracker keeps your community informed.</p>
+        </div>
+
+        <!-- Panel 2: Supported Games -->
+        <div class="panel w-full sm:w-full md:w-1/4">
+          <h2 class="text-xl mb-4">Supported Games</h2>
+          <ul class="list-disc list-inside">
+            <li>Counter-Strike 2</li>
+            <li>Team Fortress 2</li>
+            <li>Garry's Mod</li>
+            <li>Left 4 Dead 2</li>
+            <li>And more...</li>
+          </ul>
+        </div>
+
+        <!-- Panel 3: Features -->
+        <div class="panel w-full sm:w-full md:w-1/4">
+          <h2 class="text-xl mb-4">Features</h2>
+          <ul class="list-disc list-inside">
+            <li>Real-time server tracking</li>
+            <li>Player statistics directly from the server</li>
+            <li>Customizable alerts for Discord servers</li>
+            <li>Easy Discord integration</li>
+            <li>Discord server commands</li>
+          </ul>
+        </div>
+
       </div>
     </main>
   </body>

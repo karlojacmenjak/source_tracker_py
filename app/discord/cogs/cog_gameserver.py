@@ -46,7 +46,7 @@ class CogGameServer(commands.Cog):
         self.fetch_server_info.cancel()
         return super().cog_unload()
 
-    @tasks.loop(seconds=DashboardConstants.check_period_min)
+    @tasks.loop(minutes=DashboardConstants.check_period_min)
     async def fetch_server_info(self) -> None:
         for guild in self.bot.guilds:
             stats_channel = (
