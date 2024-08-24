@@ -7,7 +7,7 @@ import humanize
 from discord.ext import commands, tasks
 from tablib import Dataset
 
-from app.discord.cogs.embeds.embeds import ServerInfoEmbed
+from app.discord.cogs.helpers.embeds import ServerInfoEmbed
 from app.models.database import ValidGameServer
 from app.models.form import GameServer
 from core.constant import DashboardConstants

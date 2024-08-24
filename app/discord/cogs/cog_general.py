@@ -1,7 +1,10 @@
 import discord
 from discord.ext import commands
 
-from app.discord.cogs.embeds.embeds import HelpEmbed, OnJoinEmbed
+from app.discord.cogs.helpers.buttons import ActionButton
+from app.discord.cogs.helpers.embeds import HelpEmbed, OnJoinEmbed, RequestEmbed
+from app.models.form import GameServer
+from core.factory.controller_factory import ControllerFactory
 
 
 class CogGeneral(commands.Cog):
@@ -21,10 +24,48 @@ class CogGeneral(commands.Cog):
 
     @commands.slash_command(
         usage="/test",
-        description="Tests if bot is alive or dead, like a that one guys cat!\nUsage: /test",
+        description="Tests if bot is alive or dead, like a that one guys cat!\nUsage: `/test`",
     )
     async def test(self, ctx: discord.ApplicationContext):
         await ctx.respond("`Test completed succesfully` ||Also I am not a cat||")
+
+    @commands.slash_command(
+        usage="/request",
+        description="Request adding a Source Engine game server to watchlist\nUsage: `/request <address> <port>`",
+    )
+    @discord.option(
+        name="address",
+        input_type=str,
+    )
+    @discord.option(
+        name="port",
+        input_type=int,
+    )
+    async def request(
+        self, ctx: discord.ApplicationContext, address: str, port: int
+    ) -> None:
+        await ctx.defer(ephemeral=False)
+        controller = ControllerFactory.get_gameserver_controller()
+        server = GameServer(address=address, port=port)
+        valid_server = await controller.filter_valid_servers([server])
+
+        view = discord.ui.View(timeout=None)
+
+        # for role_id in self.bot.users:
+        #     # Get the role from the guild by ID.
+        #     role = ctx.guild.get_role(role_id)
+        view.add_item(ActionButton(label="Accept", style=discord.ButtonStyle.green))
+        view.add_item(ActionButton(label="Deny", style=discord.ButtonStyle.red))
+
+        if len(valid_server) > 0:
+            await ctx.send_followup(
+                view=view, embed=RequestEmbed(ctx, valid_server[0]), ephemeral=False
+            )
+            return
+        await ctx.send_followup(
+            "Server is not valid, please enter a valid server address and port!",
+            ephemeral=True,
+        )
 
 
 def setup(bot: commands.Bot) -> None:

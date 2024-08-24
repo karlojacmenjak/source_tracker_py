@@ -74,3 +74,18 @@ class HelpEmbed(discord.Embed):
             thumbnail=bot.user.avatar.url,
             fields=embed_fields,
         )
+
+
+class RequestEmbed(discord.Embed):
+    def __init__(
+        self, ctx: discord.ApplicationContext, server: ValidGameServer
+    ) -> None:
+        title = (
+            f"{ctx.interaction.user.display_name} requests adding a server to watchlist"
+        )
+        super().__init__(
+            title=title,
+            description=server.server_name,
+            timestamp=datetime.now(),
+            thumbnail=ctx.bot.user.avatar.url,
+        )
