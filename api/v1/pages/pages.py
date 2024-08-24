@@ -86,7 +86,7 @@ async def guild_dashboard(
     session_id = request.cookies.get("session_id")
     session = await local_db.get_session(session_id)
 
-    if not session_id or not await local_db.get_session(session_id):
+    if not session_id or not session:
         return RedirectResponse("/")
 
     token, _, _ = session
