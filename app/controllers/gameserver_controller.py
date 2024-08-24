@@ -1,5 +1,3 @@
-import socket
-
 import a2s
 from a2s import GoldSrcInfo, SourceInfo
 
