@@ -41,7 +41,7 @@ async def main(
 
 
 @pages_router.get("/dashboard", response_class=HTMLResponse)
-async def guilds(
+async def global_dashboard(
     request: Request,
     page_controller: PageController = Depends(ControllerFactory.get_page_controller),
     discord_data: DiscordDataController = Depends(
@@ -75,7 +75,7 @@ async def guilds(
 
 
 @pages_router.get("/dashboard/{guild_id}/", response_class=HTMLResponse)
-async def dashboard(
+async def guild_dashboard(
     request: Request,
     guild_id: int,
     page_controller: PageController = Depends(ControllerFactory.get_page_controller),
