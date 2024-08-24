@@ -1,4 +1,6 @@
+import json
 from datetime import datetime, timedelta
+from random import randint
 
 import discord
 import humanize
@@ -11,6 +13,19 @@ from app.models.form import GameServer
 from core.constant import DashboardConstants
 from core.database.local_database import local_db
 from core.factory.controller_factory import ControllerFactory
+
+
+async def autocomplete_server(ctx: discord.AutocompleteContext) -> list[str]:
+    choices: list[discord.OptionChoice] = []
+    response = await local_db.get_game_servers(ctx.interaction.guild_id)
+
+    for server in response:
+        s = {"address": server.address, "port": server.port}
+        choices.append(
+            discord.OptionChoice(name=server.server_name, value=json.dumps(s))
+        )
+
+    return choices
 
 
 class CogGameServer(commands.Cog):
@@ -74,17 +89,33 @@ class CogGameServer(commands.Cog):
         usage="/peek <servername>",
         description="Peeks into server, showing players in it\n`/peek <servername>`",
     )
-    async def peek(self, ctx: discord.ApplicationContext) -> None:
-        game_servers = await local_db.get_game_servers(guild_id=ctx.guild_id())
+    @discord.option(
+        name="server",
+        description="Pick a server",
+        autocomplete=autocomplete_server,
+    )
+    async def peek(self, ctx: discord.ApplicationContext, server: str) -> None:
+        server: GameServer = GameServer.model_validate_json(server)
+        game_servers = await local_db.get_game_servers(
+            guild_id=ctx.interaction.guild_id
+        )
 
-        players = await self.controller.get_server_players(game_servers[0])
+        server = next(
+            filter(
+                lambda g: g.address == server.address and g.port == server.port,
+                game_servers,
+            )
+        )
+
+        players = await self.controller.get_server_players(server)
         players = sorted(players, key=lambda p: p.score, reverse=True)
 
         data = Dataset(headers=["Username", "Score", "Time playing"])
 
         for p in players:
             data.append([p.name, p.score, humanize.naturaldelta(p.duration)])
-        message = f"```" + data.export("cli", tablefmt="github") + "```"
+        message = f"```Current players in {server.server_name}```"
+        message += "```" + data.export("cli", tablefmt="github") + "```"
 
         await ctx.respond(message)
 
