@@ -5,6 +5,7 @@ from discord import Embed, EmbedField, Guild
 from discord.ext.commands import Bot
 
 from app.models.database import ValidGameServer
+from app.models.form import GameServer
 from core.constant import AppConstants, BotConstants
 
 
@@ -53,6 +54,26 @@ class OnJoinEmbed(discord.Embed):
             author=discord.EmbedAuthor(
                 name="Source Tracker", icon_url=bot.user.avatar.url
             ),
+        )
+
+
+class WatchlistEmbed(discord.Embed):
+    def __init__(self, bot: Bot, guild: Guild, servers: list[GameServer]) -> None:
+        title = f"{guild.name} Watchlist"
+        description = "Source Engine servers:"
+
+        embed_fields: list[discord.EmbedField] = []
+
+        for s in servers:
+            embed_fields.append(discord.EmbedField(name=s.server_name, value=""))
+
+        super().__init__(
+            title=title,
+            description=description,
+            color=BotConstants.color,
+            timestamp=datetime.now(),
+            thumbnail=bot.user.avatar.url,
+            fields=embed_fields,
         )
 
 

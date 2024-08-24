@@ -1,10 +1,15 @@
 import discord
 from discord.ext import commands
 
-from app.discord.cogs.helpers.buttons import ActionButton
-from app.discord.cogs.helpers.embeds import HelpEmbed, OnJoinEmbed, RequestEmbed
+from app.discord.cogs.helpers.embeds import (
+    HelpEmbed,
+    OnJoinEmbed,
+    RequestEmbed,
+    WatchlistEmbed,
+)
 from app.discord.cogs.helpers.views import RequestView
 from app.models.form import GameServer
+from core.database.local_database import local_db
 from core.factory.controller_factory import ControllerFactory
 
 
@@ -29,6 +34,17 @@ class CogGeneral(commands.Cog):
     )
     async def test(self, ctx: discord.ApplicationContext):
         await ctx.respond("`Test completed succesfully` ||Also I am not a cat||")
+
+    @commands.slash_command(
+        usage="/watchlist",
+        description="Displays all Source Engine servers this guild is tracking\nUsage: `/watchlist`",
+    )
+    async def watchlist(self, ctx: discord.ApplicationContext):
+        servers = await local_db.get_game_servers(guild_id=ctx.interaction.guild_id)
+
+        await ctx.respond(
+            embed=WatchlistEmbed(self.bot, ctx.interaction.guild, servers)
+        )
 
     @commands.slash_command(
         usage="/request",
