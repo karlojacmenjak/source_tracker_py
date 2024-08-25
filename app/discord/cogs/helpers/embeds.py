@@ -104,9 +104,12 @@ class RequestEmbed(discord.Embed):
         title = (
             f"{ctx.interaction.user.display_name} requests adding a server to watchlist"
         )
+
+        description = f"""To add {server.server_name} to the watchlist, an administrator has to approve the change with the below actions:"""
+
         super().__init__(
             title=title,
-            description=server.server_name,
+            description=description,
             timestamp=datetime.now(),
             thumbnail=ctx.bot.user.avatar.url,
         )
