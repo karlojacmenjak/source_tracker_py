@@ -95,7 +95,7 @@ async def guild_dashboard(
     user_avatar = discord_data.get_user_avatar(user)
 
     settings = await local_db.get_bot_settings(guild_id)
-    game_servers = await local_db.get_game_servers(guild_id)
+    game_servers = await local_db.get_game_servers_by_guild(guild_id)
 
     enable_features = False
     check_period = DashboardConstants.check_period_min

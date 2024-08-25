@@ -17,7 +17,7 @@ from core.factory.controller_factory import ControllerFactory
 
 async def autocomplete_server(ctx: discord.AutocompleteContext) -> list[str]:
     choices: list[discord.OptionChoice] = []
-    response = await local_db.get_game_servers(ctx.interaction.guild_id)
+    response = await local_db.get_game_servers_by_guild(ctx.interaction.guild_id)
 
     for server in response:
         s = {"address": server.address, "port": server.port}
@@ -58,7 +58,7 @@ class CogGameServer(commands.Cog):
             if not enable_features:
                 continue
 
-            game_servers = await local_db.get_game_servers(guild_id=guild.id)
+            game_servers = await local_db.get_game_servers_by_guild(guild_id=guild.id)
             for server in game_servers:
 
                 if self.info_check_required(check_period, server.last_data_fetch):
@@ -102,7 +102,7 @@ class CogGameServer(commands.Cog):
     )
     async def peek(self, ctx: discord.ApplicationContext, server: str) -> None:
         server: GameServer = GameServer.model_validate_json(server)
-        game_servers = await local_db.get_game_servers(
+        game_servers = await local_db.get_game_servers_by_guild(
             guild_id=ctx.interaction.guild_id
         )
 

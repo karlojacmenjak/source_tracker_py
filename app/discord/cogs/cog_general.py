@@ -8,6 +8,7 @@ from app.discord.cogs.helpers.embeds import (
     WatchlistEmbed,
 )
 from app.discord.cogs.helpers.views import RequestView
+from app.models.database import ValidGameServer
 from app.models.form import GameServer
 from core.database.local_database import local_db
 from core.factory.controller_factory import ControllerFactory
@@ -40,7 +41,9 @@ class CogGeneral(commands.Cog):
         description="Displays all Source Engine servers this guild is tracking\nUsage: `/watchlist`",
     )
     async def watchlist(self, ctx: discord.ApplicationContext):
-        servers = await local_db.get_game_servers(guild_id=ctx.interaction.guild_id)
+        servers = await local_db.get_game_servers_by_guild(
+            guild_id=ctx.interaction.guild_id
+        )
 
         await ctx.respond(
             embed=WatchlistEmbed(self.bot, ctx.interaction.guild, servers)
@@ -64,13 +67,23 @@ class CogGeneral(commands.Cog):
         await ctx.defer(ephemeral=False)
         controller = ControllerFactory.get_gameserver_controller()
         server = GameServer(address=address, port=port)
-        valid_server = await controller.filter_valid_servers([server])
 
-        view = RequestView()
+        db_server = await local_db.get_game_server(server)
 
-        if len(valid_server) > 0:
+        valid_server: ValidGameServer | None = None
+        if db_server:
+            valid_server = ValidGameServer(**db_server.model_dump())
+        else:
+            try:
+                valid_server = await controller.get_server_info(server)
+            except Exception as e:
+                pass
+
+        view = RequestView(server=valid_server)
+
+        if valid_server:
             await ctx.send_followup(
-                view=view, embed=RequestEmbed(ctx, valid_server[0]), ephemeral=False
+                view=view, embed=RequestEmbed(ctx, valid_server), ephemeral=False
             )
             return
         await ctx.send_followup(
