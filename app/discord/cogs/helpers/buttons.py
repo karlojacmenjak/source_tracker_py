@@ -19,6 +19,7 @@ class ActionButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         if interaction.permissions.administrator:
             await self.custom_callback()
+            await interaction.respond("`Action was confirmed!`", ephemeral=True)
             return
         await interaction.response.send_message(
             f"❌ You are not allowed to do this action!",
