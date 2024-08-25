@@ -76,6 +76,7 @@ class CogGeneral(commands.Cog):
         else:
             try:
                 valid_server = await controller.get_server_info(server)
+                await local_db.add_game_servers([valid_server])
             except Exception as e:
                 pass
 

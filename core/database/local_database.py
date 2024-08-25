@@ -159,6 +159,15 @@ class DashboardDB(ezcord.DBHandler):
             detect_types=1,
         )
 
+        await self.add_game_servers(valid_servers)
+
+        await self.exec(
+            "DELETE FROM settings_game_servers WHERE guild_id = ?", (settings.guild_id)
+        )
+
+        await self.add_settings_game_servers(settings.guild_id, valid_servers)
+
+    async def add_game_servers(self, valid_servers: ValidGameServer) -> None:
         await self.executemany(
             """
             INSERT OR REPLACE INTO game_servers (server_name, address, port) 
@@ -177,12 +186,6 @@ class DashboardDB(ezcord.DBHandler):
                 for server in valid_servers
             ],
         )
-
-        await self.exec(
-            "DELETE FROM settings_game_servers WHERE guild_id = ?", (settings.guild_id)
-        )
-
-        await self.add_settings_game_servers(settings.guild_id, valid_servers)
 
     async def add_settings_game_servers(
         self, guild_id: int, valid_servers: list[ValidGameServer]

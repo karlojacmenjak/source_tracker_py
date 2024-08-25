@@ -25,13 +25,16 @@ class RequestView(discord.ui.View):
             )
         )
 
-    async def accept(self):
-        await self.message.delete()
+    async def accept(self) -> None:
         await self.save_to_database()
+        await self.message.edit(
+            f"{self.server.server_name} was successfully accepted",
+            embed=None,
+            view=None,
+        )
 
     async def save_to_database(self):
         await local_db.add_settings_game_servers(self.message.guild.id, [self.server])
 
     async def deny(self):
         await self.message.delete()
-        print("Deny")
